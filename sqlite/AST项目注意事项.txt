@@ -1,0 +1,4 @@
+项目目录：
+D:\cdq_project\wxWidgets\HelloWorld2
+
+1、cout、cerr 输出不了消息，考虑写日志（写个日志类？ 考虑服用RCSKD 的RCLOG模块）

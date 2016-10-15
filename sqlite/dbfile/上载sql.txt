@@ -1,0 +1,35 @@
+
+create table trade_info
+(
+stock_name varchar(32),     --股票名称
+stock_id varchar(16),       --股票代码
+buy_time time,              --买入时间
+buy_price double,           --买入价格
+buy_num int,                --买入数量
+buy_allAmt double,          --花费金额
+buy_reason varchar(256),    --买入原因
+sell_time time,             --卖出时间
+sell_price double,          --卖出价格
+sell_num int,               --卖出数量
+sell_allAmt double,         --回笼金额
+sell_reason varchar(256),   --卖出原因
+trade_sumamt double,        --交易盈亏
+trade_review varchar(256)   --交易总结
+);
+
+insert into trade_info values('中联重科','000157','2013-06-05','6.9','200','1381.104','利空消息影响近期大幅下跌，高管增持，市盈率较低，现金较多','2014-07-29','4.68','200','935.2512','和小钱基金小精尖广新选股标准不符，优化持仓结构','-445.8528','资产不符合标准的股票，坚决不碰');
+
+
+insert into trade_info values('中国平安','000100','2013-06-09','40.09','200','1381.104','下跌到阶段底部','','','','','','','');
+
+
+
+
+
+
+
+
+
+
+
+
