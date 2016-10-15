@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ASTManager", "HelloWorld2.vcproj", "{BB606C1B-05C7-49D4-8E72-6EE7C2790C2E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dnews", "..\dnews\dnews.vcproj", "{52778D39-94E0-4541-969E-8FC340BDF33E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB606C1B-05C7-49D4-8E72-6EE7C2790C2E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BB606C1B-05C7-49D4-8E72-6EE7C2790C2E}.Debug|Win32.Build.0 = Debug|Win32
+		{BB606C1B-05C7-49D4-8E72-6EE7C2790C2E}.Release|Win32.ActiveCfg = Release|Win32
+		{BB606C1B-05C7-49D4-8E72-6EE7C2790C2E}.Release|Win32.Build.0 = Release|Win32
+		{52778D39-94E0-4541-969E-8FC340BDF33E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{52778D39-94E0-4541-969E-8FC340BDF33E}.Debug|Win32.Build.0 = Debug|Win32
+		{52778D39-94E0-4541-969E-8FC340BDF33E}.Release|Win32.ActiveCfg = Release|Win32
+		{52778D39-94E0-4541-969E-8FC340BDF33E}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
