@@ -468,12 +468,27 @@ void MyFrame::WriteThreeRptToDb(int reportType, string stock_id) {
     for (int i = 0; i < vecStockList.size(); ++i) {
 
         wxLogWarning("--begin get i[%d], stock_id[%s]", i, vecStockList[i].c_str());
+		//事务开始
+		int rc = gSqlite.begin(); 
+		if( rc !=0 ){
+			wxMessageBox(gSqlite.errString);
+			return;
+		}
+
         vector<BalanceData> vecOneAllBalance;
         WriteBalanceToDb(trim(vecStockList[i]), reportType, vecOneAllBalance);
         vector<SunYiData> vecOneAllSunYi;
         WriteSunYiToDb(trim(vecStockList[i]), reportType, vecOneAllSunYi);
         vector<CashFlowData> vecOneAllCashFlow;
         WriteCashFlowToDb(trim(vecStockList[i]), reportType, vecOneAllCashFlow);
+
+		//事务结束
+		rc = gSqlite.end(); 
+		if( rc !=0 ){
+			wxMessageBox(gSqlite.errString);
+			return;
+		}
+
         wxLogWarning("--end get vecOneAllCashFlow.size[%d]", vecOneAllCashFlow.size());
     }
 

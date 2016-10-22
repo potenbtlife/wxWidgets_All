@@ -150,6 +150,16 @@ public:
 		return sqlite3_close(m_pdb);
 	}
 
+	//执行一条sql
+	int exec(const char *sql,                          /* SQL to be evaluated */
+			int (*callback)(void*,int,char**,char**),  /* Callback function */
+			void * arg,                                /* 1st argument to callback */
+			char **errmsg                              /* Error msg written here */
+		);
+
+	int begin(); //事务开始，同时关闭自动提交模式
+	int end(); //事务结束，同时开启自动提交模式
+
 	int retCode; //保存上一次执行sqlite函数的返回值，为了让调用者知道错误码
 	string errString; //保存错误描述字符串
 
@@ -158,6 +168,7 @@ protected:
 	sqlite3_stmt* m_pStmt; //保存陈述句柄
 	string m_dbname; //保存sqlite3数据库名称
 	string m_sql; //保存执行sql
+
 };
 
 

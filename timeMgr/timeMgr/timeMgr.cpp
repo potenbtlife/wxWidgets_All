@@ -137,6 +137,50 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     arrayStr = new wxArrayString();
     refreshHistoryListBox();
     refreshObjectText();
+
+
+	//for test sqlite , select
+	/*gSqlite.open();
+	gSqlite.setSql(gGetObject);
+
+	for (int i=0; i<100000; ++i) {
+		if (gSqlite.prepare() < 0) {
+			wxMessageBox(gSqlite.errString);
+			return;
+		}
+
+		string objectStr;
+		if (1 == gSqlite.step()) {
+			objectStr = gSqlite.getColumnString(0);
+		}
+		
+		Sleep(10);
+	}
+
+	gSqlite.finalize();//释放pstmt指向的对象，防止内存泄露和多次准备导致数据返还忙状态
+*/
+
+	//for test sqlite, for update
+	gSqlite.open();
+	gSqlite.setSql(gUpdateObject);
+	
+	string text = "test for sqlite update!";
+
+	for (int i=0; i<1000000; ++i) {
+		if (gSqlite.prepare() < 0) {
+			wxMessageBox(gSqlite.errString);
+		}
+
+		gSqlite.bindString(1, text.c_str(), -1, SQLITE_STATIC);
+
+		if (gSqlite.step() < 0) {
+			wxMessageBox(gSqlite.errString);
+		};
+
+	}
+	
+	gSqlite.finalize();//释放pstmt指向的对象，防止内存泄露和多次准备导致数据返还忙状态
+
 }
 
 void MainFrame::OnReset(wxCommandEvent& event) {

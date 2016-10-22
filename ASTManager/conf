@@ -1,5 +1,5 @@
 DBPATH=./db
-ProxyAddr=proxy.test.com #注释掉此行，不用代理
+#ProxyAddr=proxy.test.com #注释掉此行，不用代理
 ProxyPort=8080
 ProxyUser=username
 ProxyPwd=pwd

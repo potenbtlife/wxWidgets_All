@@ -1,8 +1,7 @@
 #include "CDBSqlite.h"
 
 //缺省构造函数
-CDBSqlite::CDBSqlite()
-{
+CDBSqlite::CDBSqlite() {
 }
 
 /**
@@ -269,4 +268,45 @@ string CDBSqlite::getColumnName(int index)
 	sprintf(buf,"%s\n",pValue);
 	
 	return string(buf);
+}
+
+/*直接执行一条sql
+*/
+int CDBSqlite::exec(const char *sql,                           /* SQL to be evaluated */
+					int (*callback)(void*,int,char**,char**),  /* Callback function */
+					void * arg,                                    /* 1st argument to callback */
+					char **errmsg                              /* Error msg written here */
+					){
+
+	return sqlite3_exec( m_pdb, sql,callback,arg,errmsg);
+
+}
+
+/*事务开始，关闭自动提交模式
+*/
+int CDBSqlite::begin(){
+
+	char * errMsg = (char*) sqlite3_malloc(100);
+	int rc = exec("BEGIN;", 0, 0, &errMsg);
+	if (rc != 0 && errMsg) {
+		errString = string(errMsg);
+		sqlite3_free(errMsg);
+	}
+	
+
+	return rc;
+}
+
+/*事务结束，同时开启自动提交模式
+*/
+int CDBSqlite::end(){
+
+	char * errMsg = (char*) sqlite3_malloc(100);
+	int rc = exec("COMMIT;", 0, 0, &errMsg);
+	if (rc != 0 && errMsg) {
+		errString = string(errMsg);
+		sqlite3_free(errMsg);
+	}
+
+	return rc;
 }
