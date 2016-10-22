@@ -307,7 +307,7 @@ void MyFrame::DownLoadYearThreeTbl(wxCommandEvent& event) {
 
     tblthread->Run();
 
-	Runtime::getInstance()->myTimer.Start(1000*60);//1分钟触发一次
+	//Runtime::getInstance()->myTimer.Start(1000*60);//1分钟触发一次, 没有作用, 因为此句也会马上执行
 }
 
 
@@ -324,7 +324,7 @@ void MyFrame::DownLoadMidThreeTbl(wxCommandEvent& event) {
 
     tblthread->Run();
 
-	Runtime::getInstance()->myTimer.Start(1000*60);//1分钟触发一次
+	//Runtime::getInstance()->myTimer.Start(1000*60);//1分钟触发一次, 没有作用, 因为此句也会马上执行
 }
 
 void MyFrame::DownLoadOneThreeTbl(wxCommandEvent& event) {

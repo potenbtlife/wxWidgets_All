@@ -1,7 +1,7 @@
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'03606','福耀玻璃',0);
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01062','国开投资',0);
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02312','中国金融租赁',0);
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00954','常茂生物',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02869','绿城服务',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02303','恒兴黄金',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01027','中国集成控股',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'06178','光大证券',0);
 
 
 --升级 wxwidgets，使用freechart注意事项：使用了wxAuiManager类 的MainFrame里的析构函数要调用 auiMan->UnInit();
@@ -604,7 +604,7 @@ insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00352','富阳
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00353','能源国际投资',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00354','中国软件国际',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00355','世纪城市国际',0);
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00357','美兰机场',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00357','航机股份',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00358','江西铜业股份',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00359','海升果汁',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00360','新焦点',0);
@@ -647,7 +647,7 @@ insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00397','君阳
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00398','东方表行集团',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00399','联合基因集团',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00401','万嘉集团',0);
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00402','蒙古投资',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00402','天下图控股',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00403','星光集团',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00404','新昌营造',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00406','有利集团',0);
@@ -1965,7 +1965,6 @@ insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01565','成实
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01327','时间由你',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01858','春立正达医疗器械',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'06168','中国优通',0);
-
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01530','三生制药',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01253','博大绿泽',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01522','城市轨道交通',0);
@@ -1986,3 +1985,27 @@ insert into stock_list(type,stock_id,stock_name,curprice) values(0,'03908','中金
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02138','医思医疗',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02221','创业集团',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01462','金诚控股',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'03606','福耀玻璃',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01062','国开投资',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02312','中国金融租赁',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00954','常茂生物',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02886','滨海投资',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02669','中海物业',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'06161','泰加保险',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01355','朸濬国际',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02699','新明中国',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01599','城建设计',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01330','绿色动力环保',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'06139','金茂酒店-SS',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01771','新丰泰集团',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'06128','泛亚国际',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'03709','珂莱蒂尔',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01305','伟志控股',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01362','新龙移动',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00170','中国资本',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'06118','奥星生命科技',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'03969','中国通号',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01583','亲亲食品',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'06138','哈尔滨银行',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01606','国银租赁',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01508','中国再保险',0);

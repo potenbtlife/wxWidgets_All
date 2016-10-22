@@ -112,7 +112,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     wxBoxSizer* rightUpSizer = new wxBoxSizer(wxVERTICAL);
     rightUpSizer->Add(resetButton, 0, wxALIGN_TOP|wxALIGN_RIGHT, 0);
     rightUpSizer->AddSpacer(75);
-    rightUpSizer->Add(priorityChoice, 0, wxALIGN_BOTTOM|wxALIGN_LEFT, 0);
+    rightUpSizer->Add(priorityChoice, 0, wxALIGN_LEFT, 0);
     rightUpSizer->AddSpacer(22);
     wxBoxSizer* rightButtomSizer = new wxBoxSizer(wxVERTICAL);
     rightButtomSizer->Add(endButton, 0, wxALIGN_TOP|wxALIGN_RIGHT, 0);

@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;D:\mydata\wxWidgets\wxWidgets-3.0.2\include\msvc&quot;;&quot;D:\mydata\wxWidgets\wxWidgets-3.0.2\include&quot;;D:\cdq_project\sqlite\include"
+				AdditionalIncludeDirectories="&quot;..\..\wxWidgets-3.1.0\include\msvc&quot;;&quot;..\..\wxWidgets-3.1.0\include&quot;;..\..\sqlite\include"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -59,7 +59,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="comctl32.lib Rpcrt4.lib sqlite3.lib"
-				AdditionalLibraryDirectories="&quot;D:\mydata\wxWidgets\wxWidgets-3.0.2\lib\vc_lib&quot;;D:\cdq_project\sqlite\lib"
+				AdditionalLibraryDirectories="&quot;..\..\wxWidgets-3.1.0\lib\vc_lib&quot;;..\..\sqlite\lib"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
 			/>
