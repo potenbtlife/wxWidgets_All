@@ -296,7 +296,7 @@ MyFrame::MyFrame(wxWindowID frameID, const wxString& title, const wxPoint& pos, 
 void MyFrame::DownLoadYearThreeTbl(wxCommandEvent& event) {
     //WriteThreeRptToDb(0);
 
-	Runtime::getInstance()->myTimer.Stop();//先停止轮询，否则会由于抢占操作数据库，导致出问题。
+	//Runtime::getInstance()->myTimer.Stop();//先停止轮询，否则会由于抢占操作数据库，导致出问题。
 	
     DownLoadThreeTblThread* tblthread = new DownLoadThreeTblThread(this, 0);
 
@@ -313,7 +313,7 @@ void MyFrame::DownLoadYearThreeTbl(wxCommandEvent& event) {
 
 void MyFrame::DownLoadMidThreeTbl(wxCommandEvent& event) {
 
-	Runtime::getInstance()->myTimer.Stop();//先停止轮询，否则会由于抢占操作数据库，导致出问题。
+	//Runtime::getInstance()->myTimer.Stop();//先停止轮询，否则会由于抢占操作数据库，导致出问题。
 
     DownLoadThreeTblThread* tblthread = new DownLoadThreeTblThread(this, 1);
 
@@ -472,7 +472,7 @@ void MyFrame::WriteThreeRptToDb(int reportType, string stock_id) {
 		int rc = gSqlite.begin(); 
 		if( rc !=0 ){
 			wxMessageBox(gSqlite.errString);
-			return;
+			continue;
 		}
 
         vector<BalanceData> vecOneAllBalance;
@@ -486,7 +486,7 @@ void MyFrame::WriteThreeRptToDb(int reportType, string stock_id) {
 		rc = gSqlite.end(); 
 		if( rc !=0 ){
 			wxMessageBox(gSqlite.errString);
-			return;
+			continue;
 		}
 
         wxLogWarning("--end get vecOneAllCashFlow.size[%d]", vecOneAllCashFlow.size());
