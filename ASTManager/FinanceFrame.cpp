@@ -482,13 +482,13 @@ void FinanceFrame::RefreshFinanceIndexGT(vector<FinanceIndexData>& vecFinanceInd
 void FinanceFrame::CalcAllFinanceIndex(string reportType, string stockId) {
     wxLogDebug("begin CalcAllFinanceIndex");
 
-    vector<string> vecAllIDName;
+    vector<string> vecAllId;
 
     if (stockId == "") {
-        getAllStockIdName(vecAllIDName);
+        getAllStockId(vecAllId);
 
     } else {
-        vecAllIDName.push_back(stockId);
+        vecAllId.push_back(stockId);
     }
 
     vector<BalanceData> vecBalanceData;
@@ -496,18 +496,10 @@ void FinanceFrame::CalcAllFinanceIndex(string reportType, string stockId) {
     vector<CashFlowData> vecCashFlowData;
     string stock_id;
 
-    for (int pos = 0; pos < vecAllIDName.size(); ++pos) {
+    for (int pos = 0; pos < vecAllId.size(); ++pos) {
         wxLogDebug("cur pos[%d]", pos);
 
-        int index = vecAllIDName[pos].find("_", 0);
-
-        if (index == string::npos) {
-            stock_id = vecAllIDName[pos];
-
-        } else {
-
-            stock_id = vecAllIDName[pos].substr(0, index).c_str();
-        }
+		stock_id = vecAllId[pos];
 
         //string stock_id = "02038"; //for test
         //reportType="Äê±¨"; //for test

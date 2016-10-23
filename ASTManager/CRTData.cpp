@@ -483,14 +483,14 @@ int CRTData::Recv(int sockfd, string& allGetData, int& code, FILE* flstm) {
         FD_SET(sockfd, &readSet);
         timeval tv;
         tv.tv_sec =0;
-        tv.tv_usec = 0;
+        tv.tv_usec = 100000; //单位为微秒，100毫秒
         
         int ret = select(sockfd+1, &readSet, NULL, NULL, &tv); //如果不用select，在多线程模式下,会访问越界，故用非阻塞模式
         if(  ret < 0 ){
             wxLogError("Recv select error! errcode[%d]", WSAGetLastError());
             return -1;
         }else if( ret == 0){ //0 为timeout
-            Sleep(200); //参数为毫秒
+            //Sleep(200); //参数为毫秒
             //wxThread::Sleep(200);
             continue;
         }

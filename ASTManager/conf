@@ -38,6 +38,6 @@ A_YONGJIN=5:0.00025 交易佣金：最高收费为3‰，最低收费5元。各家劵商收费不一，开户
 卖出实收入：100800元-100.8元-10元-302.4元=100386.8元;
 
 
-NewsDir=.\news
+NewsDir=e:\ASTManager\news
 isNotify=0 #是否启动实时股价提醒
-dNewsApp=SogouExplorer.exe #下载新闻信息的程序名
+dNewsApp=dnews.exe #下载新闻信息的程序名

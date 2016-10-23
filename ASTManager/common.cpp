@@ -2,6 +2,7 @@
 #include "Runtime.h"
 #include <math.h>
 std::string qryStockIdName = "select distinct stock_id, stock_name from stock_list order by stock_id";
+std::string qryStockId = "select distinct stock_id from stock_list order by stock_id";
 const std::string m_qryValueSql = "select a.recordtime, a.value_advice, a.detail_info, a.fund_share, a.fund_value, a.marketvalue, \
                                   a.cash from value_info a  where a.recordtime=(select max(recordtime) from value_info \
                                   where compose_id=a.compose_id) and compose_id=?";
@@ -305,6 +306,23 @@ int getAllStockIdName(vector<string>& vecStockIdName){
     }
 
     return 1;
+}
+
+int getAllStockId(vector<string>& vecStockId){
+
+	Runtime::getInstance()->sqlite.setSql(qryStockId);
+	if( Runtime::getInstance()->sqlite.prepare() < 0 ){
+		wxMessageBox(Runtime::getInstance()->sqlite.errString);
+		return -1;
+	}
+
+	while ( 1 == Runtime::getInstance()->sqlite.step() )
+	{
+		string strId = Runtime::getInstance()->sqlite.getColumnString(0);
+		vecStockId.push_back(trim(strId));
+	}
+
+	return 1;
 }
 
 void qryCashAndShare(int composeId, double& cashVaule, double& curShare)

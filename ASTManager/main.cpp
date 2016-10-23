@@ -296,7 +296,7 @@ MyFrame::MyFrame(wxWindowID frameID, const wxString& title, const wxPoint& pos, 
 void MyFrame::DownLoadYearThreeTbl(wxCommandEvent& event) {
     //WriteThreeRptToDb(0);
 
-	//Runtime::getInstance()->myTimer.Stop();//先停止轮询，否则会由于抢占操作数据库，导致出问题。
+	Runtime::getInstance()->myTimer.Stop();//先停止轮询，否则会由于抢占操作数据库，导致出问题。
 	
     DownLoadThreeTblThread* tblthread = new DownLoadThreeTblThread(this, 0);
 
@@ -313,7 +313,9 @@ void MyFrame::DownLoadYearThreeTbl(wxCommandEvent& event) {
 
 void MyFrame::DownLoadMidThreeTbl(wxCommandEvent& event) {
 
-	//Runtime::getInstance()->myTimer.Stop();//先停止轮询，否则会由于抢占操作数据库，导致出问题。
+	//WriteThreeRptToDb(1);
+
+	Runtime::getInstance()->myTimer.Stop();//先停止轮询，否则会由于抢占操作数据库，导致出问题。
 
     DownLoadThreeTblThread* tblthread = new DownLoadThreeTblThread(this, 1);
 
@@ -448,26 +450,19 @@ void MyFrame::WriteThreeRptToDb(int reportType, string stock_id) {
     vector<string> vecStockList;
 
     if (stock_id == "") { //如果为空，从表中获取所有列表
-        gSqlite.setSql(getUnRegStockIdSql);
-
-        if (gSqlite.prepare() < 0) {
-            wxMessageBox(gSqlite.errString);
-            return;
-        }
-
-        while (1 == gSqlite.step()) {
-            string strId = gSqlite.getColumnString(0);
-            vecStockList.push_back(strId);
-        }
+		getAllStockId(vecStockList);
 
     }else{
         vecStockList.push_back(stock_id);
     }
 
+	vector<BalanceData> vecOneAllBalance;
+	vector<SunYiData> vecOneAllSunYi;
+	vector<CashFlowData> vecOneAllCashFlow;
 
     for (int i = 0; i < vecStockList.size(); ++i) {
 
-        wxLogWarning("--begin get i[%d], stock_id[%s]", i, vecStockList[i].c_str());
+        wxLogWarning("--begin get i[%d], count[%d], stock_id[%s]", i, vecStockList.size(), vecStockList[i].c_str());
 		//事务开始
 		int rc = gSqlite.begin(); 
 		if( rc !=0 ){
@@ -475,24 +470,29 @@ void MyFrame::WriteThreeRptToDb(int reportType, string stock_id) {
 			continue;
 		}
 
-        vector<BalanceData> vecOneAllBalance;
-        WriteBalanceToDb(trim(vecStockList[i]), reportType, vecOneAllBalance);
-        vector<SunYiData> vecOneAllSunYi;
-        WriteSunYiToDb(trim(vecStockList[i]), reportType, vecOneAllSunYi);
-        vector<CashFlowData> vecOneAllCashFlow;
-        WriteCashFlowToDb(trim(vecStockList[i]), reportType, vecOneAllCashFlow);
+        vecOneAllBalance.clear();
+        WriteBalanceToDb(vecStockList[i], reportType, vecOneAllBalance);
+
+        vecOneAllSunYi.clear();
+        WriteSunYiToDb(vecStockList[i], reportType, vecOneAllSunYi);
+
+        vecOneAllCashFlow.clear();
+        WriteCashFlowToDb(vecStockList[i], reportType, vecOneAllCashFlow);
 
 		//事务结束
-		rc = gSqlite.end(); 
+		rc = gSqlite.end();
 		if( rc !=0 ){
 			wxMessageBox(gSqlite.errString);
 			continue;
 		}
 
-        wxLogWarning("--end get vecOneAllCashFlow.size[%d]", vecOneAllCashFlow.size());
+        wxLogWarning("--end get i[%d], vecOneAllCashFlow.size[%d]", i, vecOneAllCashFlow.size());
     }
 
+	wxLogWarning("--111, reportType[%d], stock_id[%s]", reportType, stock_id.c_str());
+
     if (stock_id != "") { //单个下载不批量重算指标
+		wxLogWarning("--333, reportType[%d]", reportType);
         return;
     }
 
@@ -501,6 +501,7 @@ void MyFrame::WriteThreeRptToDb(int reportType, string stock_id) {
         FinanceFrame::CalcAllFinanceIndex("年报");
 
     } else {
+		wxLogWarning("--222, reportType[%d]", reportType);
         DeleteFinanceIndexFromDb("中报");
         FinanceFrame::CalcAllFinanceIndex("中报");
     }
@@ -520,7 +521,7 @@ void MyFrame::WriteBalanceToDb(string stock_id, int reportType, vector<BalanceDa
         gSqlite.setSql(insertBalanceRptSql);
 
         if (gSqlite.prepare() < 0) {
-            wxMessageBox(gSqlite.errString);
+            wxMessageBox(gSqlite.errString +" WriteBalanceToDb 00");
         }
 
         gSqlite.bindString(1, vecOneAllBalance[i].stock_id.c_str(), -1, SQLITE_STATIC);
@@ -554,7 +555,7 @@ void MyFrame::WriteBalanceToDb(string stock_id, int reportType, vector<BalanceDa
         gSqlite.bindDouble(29, 0); //zhaiquan
 
         if (gSqlite.step() < 0) {
-            wxMessageBox(gSqlite.errString);
+            wxMessageBox(gSqlite.errString +" WriteBalanceToDb 01");
             return;
         };
 
@@ -575,7 +576,7 @@ void MyFrame::WriteSunYiToDb(string stock_id, int reportType, vector<SunYiData>&
         gSqlite.setSql(insertSunYiRptSql);
 
         if (gSqlite.prepare() < 0) {
-            wxMessageBox(gSqlite.errString);
+            wxMessageBox(gSqlite.errString +" WriteSunYiToDb 00");
         }
 
         gSqlite.bindString(1,  vecOneAllSunYi[i].stock_id.c_str(), -1, SQLITE_STATIC);
@@ -603,7 +604,7 @@ void MyFrame::WriteSunYiToDb(string stock_id, int reportType, vector<SunYiData>&
         gSqlite.bindString(23, vecOneAllSunYi[i].bizhong.c_str(), -1, SQLITE_STATIC);
 
         if (gSqlite.step() < 0) {
-            wxMessageBox(gSqlite.errString);
+            wxMessageBox(gSqlite.errString +" WriteSunYiToDb 01");
             return;
         };
 
@@ -624,7 +625,7 @@ void MyFrame::WriteCashFlowToDb(string stock_id, int reportType, vector<CashFlow
         gSqlite.setSql(insertCashFlowSql);
 
         if (gSqlite.prepare() < 0) {
-            wxMessageBox(gSqlite.errString);
+            wxMessageBox(gSqlite.errString +" WriteCashFlowToDb 00");
         }
 
         gSqlite.bindString(1,  vecOneAllCashFlow[i].stock_id.c_str(), -1, SQLITE_STATIC);
@@ -641,7 +642,7 @@ void MyFrame::WriteCashFlowToDb(string stock_id, int reportType, vector<CashFlow
         gSqlite.bindString(12, vecOneAllCashFlow[i].bizhong.c_str(), -1, SQLITE_STATIC);
 
         if (gSqlite.step() < 0) {
-            wxMessageBox(gSqlite.errString);
+            wxMessageBox(gSqlite.errString +" WriteCashFlowToDb 01");
             return;
         };
 

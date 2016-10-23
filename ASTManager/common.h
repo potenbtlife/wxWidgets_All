@@ -273,6 +273,8 @@ bool QryUniqueRptData(string querySql, string stock_id, string recordtime);
 //获取所有的标的列表
 int getAllStockIdName(vector<string>& vecStockIdName);
 
+int getAllStockId(vector<string>& vecStockId); //仅获取所有stockid
+
 void qryCashAndShare(int composeId, double& cashVaule, double& curShare); //查询最新的现金和分额
 void InsertCashRecord(int composeId, double cash, double share, string &reasonStr );//插入记录
 
