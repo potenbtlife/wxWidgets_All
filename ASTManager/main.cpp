@@ -440,7 +440,7 @@ void MyFrame::OnReCalcFinanceIndex(wxCommandEvent& event) {
 
     thread->Run();
 
-    Runtime::getInstance()->myTimer.Start(1000*60);//1分钟触发一次
+    //Runtime::getInstance()->myTimer.Start(1000*60);//1分钟触发一次
 
 }
 
@@ -1283,7 +1283,6 @@ void DeleteFinanceIndexFromDb(string reportType) {
 
     if (gSqlite.step() < 0) {
         wxMessageBox(gSqlite.errString);
-        return;
     };
 
     gSqlite.finalize();
@@ -1299,7 +1298,6 @@ void DeleteOneFinanceIndexFromDb(string reportType, string stockId) {
 
     if (gSqlite.step() < 0) {
         wxMessageBox(gSqlite.errString);
-        return;
     };
 
     gSqlite.finalize();

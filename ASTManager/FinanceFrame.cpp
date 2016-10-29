@@ -479,8 +479,9 @@ void FinanceFrame::RefreshFinanceIndexGT(vector<FinanceIndexData>& vecFinanceInd
 }
 
 //计算所有指标，包括年报和中报
+//一次读出所有负债表、损益表、现金流量信息，再计算
 void FinanceFrame::CalcAllFinanceIndex(string reportType, string stockId) {
-    wxLogDebug("begin CalcAllFinanceIndex");
+    wxLogWarning("begin CalcAllFinanceIndex");
 
     vector<string> vecAllId;
 
@@ -497,12 +498,12 @@ void FinanceFrame::CalcAllFinanceIndex(string reportType, string stockId) {
     string stock_id;
 
     for (int pos = 0; pos < vecAllId.size(); ++pos) {
-        wxLogDebug("cur pos[%d]", pos);
 
 		stock_id = vecAllId[pos];
+		wxLogWarning("--cur pos[%d], count[%d], stock_id[%s], reportType[%s]", pos, vecAllId.size(), stock_id.c_str(), reportType.c_str());
 
-        //string stock_id = "02038"; //for test
-        //reportType="年报"; //for test
+        //string stock_id = "00417"; //for test
+        //reportType="中报"; //for test
         vecBalanceData.clear();
         vecSunYiData.clear();
         vecCashFlowData.clear();
@@ -513,7 +514,7 @@ void FinanceFrame::CalcAllFinanceIndex(string reportType, string stockId) {
         CalcOneFinanceIndexToDb(stock_id, vecBalanceData, vecSunYiData, vecCashFlowData);
     }
 
-    wxLogDebug("end CalcAllFinanceIndex");
+    wxLogWarning("end CalcAllFinanceIndex");
 }
 void FinanceFrame::CalcOneFinanceIndexToDb(string stock_id, vector<BalanceData>& vecOneAllBalance, vector<SunYiData>& vecOneAllSunYi, vector<CashFlowData> vecOneAllCashFlow) {
 
@@ -683,7 +684,7 @@ void FinanceFrame::CalcOneFinanceIndexToDb(string stock_id, vector<BalanceData>&
 
         if (Runtime::getInstance()->sqlite.step() < 0) {
             wxMessageBox(Runtime::getInstance()->sqlite.errString + " [" + vecOneAllBalance[i].stock_id + "]");
-            return;
+            continue;
         };
 
         Runtime::getInstance()->sqlite.finalize();
