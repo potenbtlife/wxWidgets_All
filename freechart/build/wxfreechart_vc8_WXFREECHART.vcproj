@@ -1118,7 +1118,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(WXWIN)\lib\vc_lib\mswud;$(WXWIN)\include;..\include"
+				AdditionalIncludeDirectories="..\..\wxWidgets-3.1.0\lib\vc_lib\mswud;..\..\wxWidgets-3.1.0\include;..\include"
 				PreprocessorDefinitions="WIN32;_LIB;_UNICODE;__WXDEBUG__;__WXMSW__;_DEBUG"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
