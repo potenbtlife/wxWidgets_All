@@ -59,9 +59,11 @@ private:
     //计算一个标的的财务指标
     static void CalcOneFinanceIndexToDb(string stock_id, vector<BalanceData>& vecOneAllBalance, vector<SunYiData>& vecOneAllSunYi, vector<CashFlowData> vecOneAllCashFlow);
 
-    void RefreshFinanceIndexGT( vector<FinanceIndexData> &vecFinanceIndexData); //刷新财务指标数据源
+	//获取数据库中所有的报表数据，返回获取的记录数
+	static int getAllReportData(string& reportType, map<string, vector<BalanceData> >& mapBalance, map<string, vector<SunYiData> >& mapSunyi, map<string, vector<CashFlowData> >& mapCashFlow);
 
-    void OnSelectedChange(wxCommandEvent& event);
+    void RefreshFinanceIndexGT( vector<FinanceIndexData> &vecFinanceIndexData); //刷新财务指标数据源
+	void OnSelectedChange(wxCommandEvent& event);
     void ShowYearThreeTbl(wxCommandEvent& event);
     void OnShowBalance(wxCommandEvent& event);
     void OnShowSunYi(wxCommandEvent& event);

@@ -8,6 +8,8 @@ std::string qryCashFlow = "select stock_id,report_time,report_type,jingying_net,
 //std::string qryFinanceIndex = "select stock_id,report_time,report_type,cashdidept,maolilv,yingyelirunlv,jinglilv,roe,roa,yingshougrowthrate,yingshoulvrungrowthrate,zongzicangrowthrate,jingzicangrowthrate,yingshouzzl,cunhuozzl,gudingzicanzzl,zongzicanzzl,gangganlv,ziyouxijgz from finance_index where stock_id = ? and report_type = ? order by report_time desc";
 std::string qryFinanceIndex = "select a.stock_id,a.report_time,a.report_type,a.cashdidept,a.maolilv,a.yingyelirunlv,a.jinglilv,a.roe,a.roa,a.yingshougrowthrate,a.yingshoulvrungrowthrate,a.zongzicangrowthrate,a.jingzicangrowthrate,a.yingshouzzl,a.cunhuozzl,a.gudingzicanzzl,a.zongzicanzzl,a.gangganlv,a.ziyouxijgz, a.guxi, a.shareValue, b.curprice from finance_index a, stock_list b where a.stock_id = b.stock_id and a.stock_id = ? and a.report_type = ? order by a.report_time desc";
 
+std::string qryAllReport="select a.stock_id, a.report_time, a.report_type, a.static_asset, a.flow_asset, a.flow_debt, a.netflow_asset, a.static_debt, a.fewholder_asset, a.net_asset, a.guben, a.chubei, a.holder_asset, a.invisible_asset, a.building_device, a.childcort_asset, a.sibing_asset, a.other_invest, a.yingshou, a.cunhuo, a.cash, a.yingfu, a.flow_bankdept, a.static_bankdept, a.all_asset, a.all_dept, a.stock_share, a.bizhong, a.bond, b.stock_id, b.report_time, b.report_type, b.yingyee, b.untax_profit, b.tax, b.tax_profit, b.fewholder_profit, b.holder_profit, b.dividend, b.net_profit, b.basic_one_profit, b.tanxiao_one_profit, b.ont_dividend, b.cost, b.depreciation, b.sell_fee, b.admin_fee, b.lixi_fee, b.gross_profit, b.jingying_profit, b.othercorp_profit, b.bizhong, c.stock_id, c.report_time, c.report_type, c.jingying_net, c.invest_net, c.rongzi_net, c.cash_add, c.cash_begin, c.cash_end, c.waihui_profit, c.buy_device, c.bizhong from balance_report a, sunyi_report b, cashflow_report c where a.stock_id=b.stock_id and b.stock_id=c.stock_id and a.report_time=b.report_time and b.report_time=c.report_time and a.report_type=b.report_type and b.report_type=c.report_type and a.report_type = ?";
+
 enum FinanceID {
     ID_STOCKIDNAME_COMBOBOX,
     ID_CONDITION_COMBOBOX,
@@ -260,6 +262,102 @@ void FinanceFrame::OnQueryCode(wxCommandEvent& event) {
     OnSelectedChange(event);
 }
 
+//获取数据库中所有的报表数据
+int FinanceFrame::getAllReportData(string& reportType, map<string, vector<BalanceData> >& mapBalance, map<string, vector<SunYiData> >& mapSunyi, map<string, vector<CashFlowData> >& mapCashFlow){
+
+	BalanceData tmpBalanceData;
+	SunYiData tmpSunYiData;
+	CashFlowData tmpCashFlow;
+
+	Runtime::getInstance()->sqlite.setSql(qryAllReport);
+
+	if (Runtime::getInstance()->sqlite.prepare() < 0) {
+		wxMessageBox(Runtime::getInstance()->sqlite.errString);
+		Runtime::getInstance()->sqlite.finalize();
+		
+		return -1;
+	}
+
+	Runtime::getInstance()->sqlite.bindString(1, reportType.c_str(), -1, SQLITE_STATIC);
+
+	while (1 == Runtime::getInstance()->sqlite.step()) {
+		tmpBalanceData.stock_id = Runtime::getInstance()->sqlite.getColumnString(0);
+		tmpBalanceData.report_time = Runtime::getInstance()->sqlite.getColumnString(1);
+		tmpBalanceData.report_type = Runtime::getInstance()->sqlite.getColumnString(2);
+		tmpBalanceData.static_asset = Runtime::getInstance()->sqlite.getColumnDouble(3);
+		tmpBalanceData.flow_asset = Runtime::getInstance()->sqlite.getColumnDouble(4);
+		tmpBalanceData.flow_debt = Runtime::getInstance()->sqlite.getColumnDouble(5);
+		tmpBalanceData.netflow_asset = Runtime::getInstance()->sqlite.getColumnDouble(6);
+		tmpBalanceData.static_debt = Runtime::getInstance()->sqlite.getColumnDouble(7);
+		tmpBalanceData.fewholder_asset = Runtime::getInstance()->sqlite.getColumnDouble(8);
+		tmpBalanceData.net_asset = Runtime::getInstance()->sqlite.getColumnDouble(9);
+		tmpBalanceData.guben = Runtime::getInstance()->sqlite.getColumnDouble(10);
+		tmpBalanceData.chubei = Runtime::getInstance()->sqlite.getColumnDouble(11);
+		tmpBalanceData.holder_asset = Runtime::getInstance()->sqlite.getColumnDouble(12);
+		tmpBalanceData.invisible_asset = Runtime::getInstance()->sqlite.getColumnDouble(13);
+		tmpBalanceData.building_device = Runtime::getInstance()->sqlite.getColumnDouble(14);
+		tmpBalanceData.childcort_asset = Runtime::getInstance()->sqlite.getColumnDouble(15);
+		tmpBalanceData.sibing_asset = Runtime::getInstance()->sqlite.getColumnDouble(16);
+		tmpBalanceData.other_invest = Runtime::getInstance()->sqlite.getColumnDouble(17);
+		tmpBalanceData.yingshou = Runtime::getInstance()->sqlite.getColumnDouble(18);
+		tmpBalanceData.cunhuo = Runtime::getInstance()->sqlite.getColumnDouble(19);
+		tmpBalanceData.cash = Runtime::getInstance()->sqlite.getColumnDouble(20);
+		tmpBalanceData.yingfu = Runtime::getInstance()->sqlite.getColumnDouble(21);
+		tmpBalanceData.flow_bankdept = Runtime::getInstance()->sqlite.getColumnDouble(22);
+		tmpBalanceData.static_bankdept = Runtime::getInstance()->sqlite.getColumnDouble(23);
+		tmpBalanceData.all_asset = Runtime::getInstance()->sqlite.getColumnDouble(24);
+		tmpBalanceData.all_dept = Runtime::getInstance()->sqlite.getColumnDouble(25);
+		tmpBalanceData.stock_share = Runtime::getInstance()->sqlite.getColumnDouble(26);
+		tmpBalanceData.bizhong = Runtime::getInstance()->sqlite.getColumnString(27);
+		tmpBalanceData.bond = Runtime::getInstance()->sqlite.getColumnDouble(28);
+
+		tmpSunYiData.stock_id = Runtime::getInstance()->sqlite.getColumnString(29);
+		tmpSunYiData.report_time = Runtime::getInstance()->sqlite.getColumnString(30);
+		tmpSunYiData.report_type = Runtime::getInstance()->sqlite.getColumnString(31);
+		tmpSunYiData.yingyee = Runtime::getInstance()->sqlite.getColumnDouble(32);
+		tmpSunYiData.untax_profit = Runtime::getInstance()->sqlite.getColumnDouble(33);
+		tmpSunYiData.tax = Runtime::getInstance()->sqlite.getColumnDouble(34);
+		tmpSunYiData.tax_profit = Runtime::getInstance()->sqlite.getColumnDouble(35);
+		tmpSunYiData.fewholder_profit = Runtime::getInstance()->sqlite.getColumnDouble(36);
+		tmpSunYiData.holder_profit = Runtime::getInstance()->sqlite.getColumnDouble(37);
+		tmpSunYiData.dividend = Runtime::getInstance()->sqlite.getColumnDouble(38);
+		tmpSunYiData.net_profit = Runtime::getInstance()->sqlite.getColumnDouble(39);
+		tmpSunYiData.basic_one_profit = Runtime::getInstance()->sqlite.getColumnDouble(40);
+		tmpSunYiData.tanxiao_one_profit = Runtime::getInstance()->sqlite.getColumnDouble(41);
+		tmpSunYiData.ont_dividend = Runtime::getInstance()->sqlite.getColumnDouble(42);
+		tmpSunYiData.cost = Runtime::getInstance()->sqlite.getColumnDouble(43);
+		tmpSunYiData.depreciation = Runtime::getInstance()->sqlite.getColumnDouble(44);
+		tmpSunYiData.sell_fee = Runtime::getInstance()->sqlite.getColumnDouble(45);
+		tmpSunYiData.admin_fee = Runtime::getInstance()->sqlite.getColumnDouble(46);
+		tmpSunYiData.lixi_fee = Runtime::getInstance()->sqlite.getColumnDouble(47);
+		tmpSunYiData.gross_profit = Runtime::getInstance()->sqlite.getColumnDouble(48);
+		tmpSunYiData.jingying_profit = Runtime::getInstance()->sqlite.getColumnDouble(49);
+		tmpSunYiData.othercorp_profit = Runtime::getInstance()->sqlite.getColumnDouble(50);
+		tmpSunYiData.bizhong = Runtime::getInstance()->sqlite.getColumnString(51);
+		
+		tmpCashFlow.stock_id = Runtime::getInstance()->sqlite.getColumnString(52);
+		tmpCashFlow.report_time = Runtime::getInstance()->sqlite.getColumnString(53);
+		tmpCashFlow.report_type = Runtime::getInstance()->sqlite.getColumnString(54);
+		tmpCashFlow.jingying_net = Runtime::getInstance()->sqlite.getColumnDouble(55);
+		tmpCashFlow.invest_net = Runtime::getInstance()->sqlite.getColumnDouble(56);
+		tmpCashFlow.rongzi_net = Runtime::getInstance()->sqlite.getColumnDouble(57);
+		tmpCashFlow.cash_add = Runtime::getInstance()->sqlite.getColumnDouble(58);
+		tmpCashFlow.cash_begin = Runtime::getInstance()->sqlite.getColumnDouble(59);
+		tmpCashFlow.cash_end = Runtime::getInstance()->sqlite.getColumnDouble(60);
+		tmpCashFlow.waihui_profit = Runtime::getInstance()->sqlite.getColumnDouble(61);
+		tmpCashFlow.buy_device = Runtime::getInstance()->sqlite.getColumnDouble(62);
+		tmpCashFlow.bizhong = Runtime::getInstance()->sqlite.getColumnString(63);
+		
+		mapBalance[tmpBalanceData.stock_id].push_back(tmpBalanceData);
+		mapSunyi[tmpSunYiData.stock_id].push_back(tmpSunYiData);
+		mapCashFlow[tmpCashFlow.stock_id].push_back(tmpCashFlow);
+	}
+
+	Runtime::getInstance()->sqlite.finalize();
+
+	return mapBalance.size();
+}
+
 int getOneBalance(string stock_id, vector<BalanceData>& vecBalanceData, string& reportType) {
 
     Runtime::getInstance()->sqlite.setSql(qryBalance);
@@ -483,35 +581,35 @@ void FinanceFrame::RefreshFinanceIndexGT(vector<FinanceIndexData>& vecFinanceInd
 void FinanceFrame::CalcAllFinanceIndex(string reportType, string stockId) {
     wxLogWarning("begin CalcAllFinanceIndex");
 
-    vector<string> vecAllId;
+    if (stockId != "") { //只计算一个标的
 
-    if (stockId == "") {
-        getAllStockId(vecAllId);
+		vector<BalanceData> vecBalanceData;
+		vector<SunYiData> vecSunYiData;
+		vector<CashFlowData> vecCashFlowData;
 
-    } else {
-        vecAllId.push_back(stockId);
+		getOneBalance(stockId, vecBalanceData, reportType);
+		getOneSunYi(stockId, vecSunYiData, reportType);
+		getOneCashFlow(stockId, vecCashFlowData, reportType);
+
+        CalcOneFinanceIndexToDb(stockId, vecBalanceData, vecSunYiData, vecCashFlowData);
+
+		return;
     }
+	
+	//如下为计算所有的
+	map<string, vector<BalanceData> > mapBalance;
+	map<string, vector<SunYiData> > mapSunyi;
+	map<string, vector<CashFlowData> > mapCashFlow;
+	int count = getAllReportData(reportType, mapBalance, mapSunyi, mapCashFlow);
 
-    vector<BalanceData> vecBalanceData;
-    vector<SunYiData> vecSunYiData;
-    vector<CashFlowData> vecCashFlowData;
-    string stock_id;
+	string stock_id;
+	int curpos=0;
+	for (map<string, vector<BalanceData> >::iterator iter=mapBalance.begin(); iter!=mapBalance.end(); ++iter) {
+		++curpos;
+		stock_id = iter->first;
+		wxLogWarning("--cur pos[%d], count[%d], stock_id[%s]", curpos, count, stock_id.c_str());
 
-    for (int pos = 0; pos < vecAllId.size(); ++pos) {
-
-		stock_id = vecAllId[pos];
-		wxLogWarning("--cur pos[%d], count[%d], stock_id[%s], reportType[%s]", pos, vecAllId.size(), stock_id.c_str(), reportType.c_str());
-
-        //string stock_id = "00417"; //for test
-        //reportType="中报"; //for test
-        vecBalanceData.clear();
-        vecSunYiData.clear();
-        vecCashFlowData.clear();
-        getOneBalance(stock_id, vecBalanceData, reportType);
-        getOneSunYi(stock_id, vecSunYiData, reportType);
-        getOneCashFlow(stock_id, vecCashFlowData, reportType);
-
-        CalcOneFinanceIndexToDb(stock_id, vecBalanceData, vecSunYiData, vecCashFlowData);
+        CalcOneFinanceIndexToDb(stock_id, iter->second, mapSunyi.find(stock_id)->second, mapCashFlow.find(stock_id)->second);
     }
 
     wxLogWarning("end CalcAllFinanceIndex");
@@ -683,7 +781,7 @@ void FinanceFrame::CalcOneFinanceIndexToDb(string stock_id, vector<BalanceData>&
         Runtime::getInstance()->sqlite.bindDouble(21, shareValue);
 
         if (Runtime::getInstance()->sqlite.step() < 0) {
-            wxMessageBox(Runtime::getInstance()->sqlite.errString + " [" + vecOneAllBalance[i].stock_id + "]");
+            wxMessageBox(Runtime::getInstance()->sqlite.errString + " [" + vecOneAllBalance[i].stock_id + "], "+ vecOneAllBalance[i].report_time);
             continue;
         };
 
