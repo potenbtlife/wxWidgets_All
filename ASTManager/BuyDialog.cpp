@@ -144,7 +144,7 @@ int BuyDialog::BuyUpdateCash(double changeCash){
 
     string stockName = buyNameCtrl->GetValue();
     string reasonStr = "买入:" + trim(stockName);
-    InsertCashRecord(Runtime::getInstance()->CurComposeID, allCash, curShare, reasonStr);
+    InsertCashRecord(Runtime::getInstance()->CurComposeID, -1*changeCash, allCash, curShare, reasonStr);
 
     //更新界面显示
     wxTextCtrl* cashCtrl = (wxTextCtrl*)wxWindowBase::FindWindowById(ID_CASH_TEXTCTRL);

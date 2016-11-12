@@ -45,7 +45,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_CLOSE(OnClose)
 END_EVENT_TABLE()
 
-const std::string m_qryCashSql = "select cash from cash_flow a where a.compose_id=? and a.change_time=(select max(change_time) from cash_flow where compose_id=a.compose_id)";
+const std::string m_qryCashSql = "select after_cash from cash_flow a where a.compose_id=? and a.change_time=(select max(change_time) from cash_flow where compose_id=a.compose_id)";
 const std::string m_qryAdviceSql = "select opt_advice from tmp_info where compose_id=?";
 const std::string m_updateAdviceSql = "update tmp_info set opt_advice = ? where compose_id=?";
 

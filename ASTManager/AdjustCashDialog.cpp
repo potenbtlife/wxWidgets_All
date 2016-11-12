@@ -61,7 +61,7 @@ void AdjustCashDialog::OnOK(wxCommandEvent& event)
     if (diffShare < 0.5 && diffShare > -0.5) { //如果由于转换导致份额的精度丢失，使用原来的份额值以防止精度丢失。
         modifyShare = m_curShare;
     }
-    InsertCashRecord(Runtime::getInstance()->CurComposeID, modifyCash, modifyShare, reasonStr);
+    InsertCashRecord(Runtime::getInstance()->CurComposeID, 0, modifyCash, modifyShare, reasonStr);//变更金额先置为0，以后再补充
 
     MyFrame* myFrame = (MyFrame*)wxWindowBase::FindWindowById(ID_MAIN_FRAME);
     myFrame->RefreshGoodsAndValue();

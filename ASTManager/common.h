@@ -32,8 +32,8 @@ static string gUpdateReview="update trade_info set trade_review=?  where rowid=?
 
 
 //查询最近的份额
-const std::string qryCashSql = "select cash, fund_share from cash_flow a where a.compose_id=? and a.change_time=(select max(change_time) from cash_flow where compose_id=a.compose_id)";
-const std::string insertCashSql = "insert into cash_flow(compose_id,cash,fund_share,change_time,change_reason) values(?,?,?,datetime('now'),?)";
+const std::string qryCashSql = "select after_cash, fund_share from cash_flow a where a.compose_id=? and a.change_time=(select max(change_time) from cash_flow where compose_id=a.compose_id)";
+const std::string insertCashSql = "insert into cash_flow(compose_id,change_cash,after_cash,fund_share,change_time,change_reason) values(?,?,?,?,datetime('now'),?)";
 
 //sqlite数据库操作对象
 //extern CDBSqlite gSqlite;
@@ -276,7 +276,7 @@ int getAllStockIdName(vector<string>& vecStockIdName);
 int getAllStockId(vector<string>& vecStockId); //仅获取所有stockid
 
 void qryCashAndShare(int composeId, double& cashVaule, double& curShare); //查询最新的现金和分额
-void InsertCashRecord(int composeId, double cash, double share, string &reasonStr );//插入记录
+void InsertCashRecord(int composeId, double changeCash, double cash, double share, string &reasonStr );//插入记录
 
 void qryValueInfo(int composeId, string& datetime,string& value_advice,string& detailInfo,double& fundShare,double& fundValue, double& marketvalue,double& cash);
 

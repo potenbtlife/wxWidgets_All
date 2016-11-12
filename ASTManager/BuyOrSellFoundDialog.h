@@ -52,7 +52,7 @@ public:
 
         string datetime,value_advice, detailInfo;
         double fundShare=0, fundValue=0,marketvalue=0,cash=0;
-        qryValueInfo(Runtime::getInstance()->CurComposeID, datetime, value_advice, detailInfo, fundShare, fundValue,marketvalue,cash);//获取value_info数据
+        qryValueInfo(Runtime::getInstance()->CurComposeID, datetime, value_advice, detailInfo, fundShare, fundValue,marketvalue,cash);//获取value_info数据，主要是为了获取净值数据
 
         string reasonStr;
         double newShare=0, newCash=0;
@@ -62,13 +62,14 @@ public:
             newShare = curShare + addShare;
             reasonStr = "申购：" + trim(reason);
         }else{
-            newCash = curCash - changeCash;
+			changeCash = -1*changeCash;
+            newCash = curCash + changeCash;
             double reduceShare = changeCash/fundValue;
             newShare = curShare - reduceShare;
             reasonStr = "赎回：" + trim(reason);
         }
         
-        InsertCashRecord(Runtime::getInstance()->CurComposeID, newCash, newShare, reasonStr);
+        InsertCashRecord(Runtime::getInstance()->CurComposeID, changeCash, newCash, newShare, reasonStr);
 
         Destroy();
     }

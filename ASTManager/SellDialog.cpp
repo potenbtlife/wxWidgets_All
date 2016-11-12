@@ -277,7 +277,7 @@ int SellDialog::updateCash(double changeCash){
     string stockName = sellNameCtrl->GetValue();
     string reasonStr = "卖出:" + trim(stockName);
 
-    InsertCashRecord(Runtime::getInstance()->CurComposeID, allCash, curShare, reasonStr);
+    InsertCashRecord(Runtime::getInstance()->CurComposeID, changeCash, allCash, curShare, reasonStr);
 
 
     //更新界面显示

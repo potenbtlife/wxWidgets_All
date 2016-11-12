@@ -341,18 +341,20 @@ void qryCashAndShare(int composeId, double& cashVaule, double& curShare)
 }
 
 
-void InsertCashRecord(int composeId, double cash, double share, string &reasonStr )
+void InsertCashRecord(int composeId, double changeCash, double afterCash, double share, string &reasonStr )
 {
     //插入现金值
     Runtime::getInstance()->sqlite.setSql(insertCashSql);
     Runtime::getInstance()->sqlite.prepare();
     Runtime::getInstance()->sqlite.bindInt(1, composeId);
-    Runtime::getInstance()->sqlite.bindDouble(2, cash);
-    Runtime::getInstance()->sqlite.bindDouble(3, share);
-    Runtime::getInstance()->sqlite.bindString(4, reasonStr.c_str(), -1, SQLITE_STATIC);
+	Runtime::getInstance()->sqlite.bindDouble(2, changeCash);
+    Runtime::getInstance()->sqlite.bindDouble(3, afterCash);
+    Runtime::getInstance()->sqlite.bindDouble(4, share);
+    Runtime::getInstance()->sqlite.bindString(5, reasonStr.c_str(), -1, SQLITE_STATIC);
 
-    if(Runtime::getInstance()->sqlite.step() < 0 && Runtime::getInstance()->sqlite.finalize()){
+    if(Runtime::getInstance()->sqlite.step() < 0){
         wxMessageBox(Runtime::getInstance()->sqlite.errString);
+		Runtime::getInstance()->sqlite.finalize();
         return;
     }
 }

@@ -290,7 +290,7 @@ int Timer::RegValueInfo(int composeID, string recordtime, double marketvalue, st
         fund_value = 1;
         fund_share = all_value / fund_value;
         string reasonStr = "第一次调整组合份额";
-        InsertCashRecord(composeID, fCash, fund_share, reasonStr);
+        InsertCashRecord(composeID, fCash, fCash, fund_share, reasonStr);
 
     } else {
         fund_value = (int)((all_value) / fund_share * 10000 + 0.5) / 10000.00; //保存四位小数，四舍五入
