@@ -3,6 +3,7 @@
 #include <math.h>
 std::string qryStockIdName = "select distinct stock_id, stock_name from stock_list order by stock_id";
 std::string qryStockId = "select distinct stock_id from stock_list order by stock_id";
+std::string qryPriceByStockid = "select curprice from stock_list where stock_id=?";
 const std::string m_qryValueSql = "select a.recordtime, a.value_advice, a.detail_info, a.fund_share, a.fund_value, a.marketvalue, \
                                   a.cash from value_info a  where a.recordtime=(select max(recordtime) from value_info \
                                   where compose_id=a.compose_id) and compose_id=?";
@@ -323,6 +324,25 @@ int getAllStockId(vector<string>& vecStockId){
 	}
 
 	return 1;
+}
+
+//根据stock_id 获取最新价格
+double getPriceByStockId(string& stockId){
+
+	Runtime::getInstance()->sqlite.setSql(qryPriceByStockid);
+	if( Runtime::getInstance()->sqlite.prepare() < 0 ){
+		wxMessageBox(Runtime::getInstance()->sqlite.errString);
+		return -1;
+	}
+	Runtime::getInstance()->sqlite.bindString(1, stockId.c_str(), -1, SQLITE_STATIC);
+
+	double retPrice = 0.0;
+	if ( 1 == Runtime::getInstance()->sqlite.step() )
+	{
+		retPrice = Runtime::getInstance()->sqlite.getColumnDouble(0);
+	}
+
+	return retPrice;
 }
 
 void qryCashAndShare(int composeId, double& cashVaule, double& curShare)

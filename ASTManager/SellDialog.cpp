@@ -9,6 +9,7 @@
 BEGIN_EVENT_TABLE(SellDialog, wxDialog)    
 	EVT_BUTTON(ID_SELLCTRL_OK,   SellDialog::OnOK)
 	EVT_BUTTON(ID_SELLCTRL_CANCEL,  SellDialog::OnCancel)
+	EVT_TEXT(ID_SELLCODE_CTRL, OnGetCurPrice)
 END_EVENT_TABLE()
 
 //卖出窗口构造函数
@@ -192,6 +193,18 @@ void SellDialog::OnCancel(wxCommandEvent& event)
 {
 	Destroy();
 	//Close(false);
+}
+
+//获取标的代码控件的id，根据此id来更新价格控件的价格
+void SellDialog::OnGetCurPrice(wxCommandEvent& event)
+{
+	string stockId = sellCodeCtrl->GetValue();
+	double price = getPriceByStockId(stockId);
+	
+	char strPrice[32];
+	sprintf(strPrice,"%.3f", price);
+	sellPriceCtrl->SetValue(strPrice);
+
 }
 
 //插入一条卖出记录到数据库

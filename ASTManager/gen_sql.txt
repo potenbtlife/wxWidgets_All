@@ -2,7 +2,11 @@ insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02869','绿城
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02303','恒兴黄金',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01027','中国集成控股',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'06178','光大证券',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01673','华章科技',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'03893','易纬集团',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01419','盈健医疗',0);
 
+--cash_flow 以后加个变更金额字段; 买入、卖出自动现在最新价格
 
 --升级 wxwidgets，使用freechart注意事项：使用了wxAuiManager类 的MainFrame里的析构函数要调用 auiMan->UnInit();
 --
@@ -57,16 +61,17 @@ delete from value_info;
 create table cash_flow
 (
 keyid integer primary key autoincrement, --自增主键
-compose_id int, --所属组合id
-cash double, --现金
-fund_share double, --基金份额
-change_time time, --变动时间
+compose_id int,     --所属组合id
+change_cash double, -- 变动金额
+after_cash double,  --变后现金
+fund_share double,  --基金份额
+change_time time,   --变动时间
 change_reason varchar(256) --变动原因
 );
 
 delete from cash_flow;
-insert into cash_flow(compose_id,cash,fund_share,change_time,change_reason) values(1,0,0,datetime('now'),'新建');
-insert into cash_flow(compose_id,cash,fund_share,change_time,change_reason) values(2,0,0,datetime('now'),'新建');
+insert into cash_flow(compose_id,cash,fund_share,change_time,change_reason) values(1,0,0,0,datetime('now'),'新建');
+insert into cash_flow(compose_id,cash,fund_share,change_time,change_reason) values(2,0,0,0,datetime('now'),'新建');
 
 --alter table cash_flow rename to cash_flow_bak;
 --insert into cash_flow(compose_id,cash,fund_share,change_time,change_reason)  select compose_id,cash,fund_share,change_time,change_reason from cash_flow_bak;
@@ -126,9 +131,10 @@ all_asset double,           --总资产
 all_dept double,            --总负债                      
 stock_share int,            --股份数目                    
 bizhong varchar(8),         --币种                        
-bond double                 --发行的债券    
-);                          
-                            
+bond double,                 --发行的债券    
+primary key(stock_id,report_time)
+);                      
+
 create table sunyi_report --sunyibiao
 (                           
 stock_id varchar(16),       
@@ -153,7 +159,8 @@ lixi_fee double,             --利息费用/融资成本
 gross_profit double,         --毛利                   
 jingying_profit double,      --经营盈利               
 othercorp_profit double,     --应占联营公司盈利       
-bizhong varchar(8)           --币种                   
+bizhong varchar(8),           --币种                   
+primary key(stock_id,report_time)
 );
 
 create table cashflow_report --现金流量表
@@ -169,7 +176,8 @@ cash_begin double,        --会计年初之现金及现金等价物
 cash_end double,          --会计年终之现金及现金等价物
 waihui_profit double,     --外汇兑换率变动之影响      
 buy_device double,        --购置固定资产款项          
-bizhong varchar(8)        --币种                      
+bizhong varchar(8),        --币种                      
+primary key(stock_id,report_time)
 );
 
 create table stock_list

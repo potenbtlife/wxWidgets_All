@@ -10,6 +10,7 @@
 BEGIN_EVENT_TABLE(BuyDialog, wxDialog)    
 	EVT_BUTTON(ID_BUYCTRL_OK,   BuyDialog::OnOK)
 	EVT_BUTTON(ID_BUYCTRL_CANCEL,  BuyDialog::OnCancel)
+	EVT_TEXT(ID_BUYCODE_CTRL, OnGetCurPrice)
 END_EVENT_TABLE()
 
 //买入窗口构造函数
@@ -153,4 +154,15 @@ int BuyDialog::BuyUpdateCash(double changeCash){
     cashCtrl->SetValue(cAllCash);
 
     return 1;
+}
+
+//获取标的代码控件的id，根据此id来更新价格控件的价格
+void BuyDialog::OnGetCurPrice(wxCommandEvent& event)
+{
+	string stockId = buyCodeCtrl->GetValue();
+	double price = getPriceByStockId(stockId);
+
+	char strPrice[32];
+	sprintf(strPrice,"%.3f", price);
+	buyPriceCtrl->SetValue(strPrice);
 }
