@@ -22,10 +22,7 @@ enum FinanceID {
     ID_THREETBL_MENU,
     ID_YEAR_TBL_BUTTON,
     ID_MID_TBL_BUTTON,
-    ID_THREETBL_BUTTON,
-    ID_BALANCETBL_BUTTON,
-    ID_SUNYIBTL_BUTTON,
-    ID_CASHFLOWBTL_BUTTON
+    ID_THREETBL_BUTTON
 };
 
 wxString AllIndex[] = {
@@ -58,9 +55,6 @@ BEGIN_EVENT_TABLE(FinanceFrame, wxFrame)
     EVT_BUTTON(ID_YEAR_TBL_BUTTON, Switch2Year)
     EVT_BUTTON(ID_MID_TBL_BUTTON, Switch2Mid)
     EVT_BUTTON(ID_THREETBL_BUTTON, ShowThreeTbl)
-    EVT_BUTTON(ID_BALANCETBL_BUTTON, OnShowBalance)
-    EVT_BUTTON(ID_SUNYIBTL_BUTTON, OnShowSunYi)
-    EVT_BUTTON(ID_CASHFLOWBTL_BUTTON, OnShowCashFlow)
 END_EVENT_TABLE()
 
 wxArrayString FinanceFrame::m_arrayAllIDName;
@@ -72,10 +66,10 @@ FinanceFrame::~FinanceFrame() {
 FinanceFrame::FinanceFrame(string stockId) : wxFrame(NULL, wxID_ANY, "Finance analyse index", wxDefaultPosition, wxSize(900, 670)),
     m_balanceFrame(NULL), m_sunYiFrame(NULL), m_cashFlowFrame(NULL), m_reportType("年报"), _stockId(stockId) {
     wxMenu* menuFile = new wxMenu;
-    menuFile->Append(ID_THREETBL_MENU, "&三表\tCtrl-T");
-    menuFile->Append(ID_BALANCE_MENU, "&资产负债表\tCtrl-B");
-    menuFile->Append(ID_SUNYI_MENU, "&综合损益表\tCtrl-S");
-    menuFile->Append(ID_CASHFLOW_MENU, "&现金流量表\tCtrl-C");
+    menuFile->Append(ID_THREETBL_MENU, "&三表");
+    menuFile->Append(ID_BALANCE_MENU, "&资产负债表");
+    menuFile->Append(ID_SUNYI_MENU, "&综合损益表");
+    menuFile->Append(ID_CASHFLOW_MENU, "&现金流量表");
 
     CreateStatusBar();
     SetStatusText("当前类型：" + m_reportType); //显示组合名称

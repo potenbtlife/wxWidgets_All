@@ -4,6 +4,7 @@
 std::string qryStockIdName = "select distinct stock_id, stock_name from stock_list order by stock_id";
 std::string qryStockId = "select distinct stock_id from stock_list order by stock_id";
 std::string qryPriceByStockid = "select curprice from stock_list where stock_id=?";
+std::string qryNameByStockid = "select stock_name from stock_list where stock_id=?";
 const std::string m_qryValueSql = "select a.recordtime, a.value_advice, a.detail_info, a.fund_share, a.fund_value, a.marketvalue, \
                                   a.cash from value_info a  where a.recordtime=(select max(recordtime) from value_info \
                                   where compose_id=a.compose_id) and compose_id=?";
@@ -344,6 +345,26 @@ double getPriceByStockId(string& stockId){
 
 	return retPrice;
 }
+
+//根据stock_id 获取名称
+string getNameByStockId(string& stockId){
+
+	Runtime::getInstance()->sqlite.setSql(qryNameByStockid);
+	if( Runtime::getInstance()->sqlite.prepare() < 0 ){
+		wxMessageBox(Runtime::getInstance()->sqlite.errString);
+		return "";
+	}
+	Runtime::getInstance()->sqlite.bindString(1, stockId.c_str(), -1, SQLITE_STATIC);
+
+	string stockName;
+	if ( 1 == Runtime::getInstance()->sqlite.step() )
+	{
+		stockName = Runtime::getInstance()->sqlite.getColumnString(0);
+	}
+
+	return stockName;
+}
+
 
 void qryCashAndShare(int composeId, double& cashVaule, double& curShare)
 {

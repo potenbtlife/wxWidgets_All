@@ -23,10 +23,10 @@ BuyDialog::BuyDialog(wxWindow *parent,
 					const wxString& name)
 					:wxDialog(parent,id,title,pos,size,style,name)
 {
-	wxStaticText *buyNameText = new wxStaticText(this, -1, "股票名称:",wxPoint(20, 10),wxSize(60, 20));
-	buyNameCtrl = new wxTextCtrl(this,ID_BUYNANME_CTRL, "",wxPoint(90, 10),wxSize(80, 20));
-	wxStaticText *buyCodeText = new wxStaticText(this, -1, "代码:",wxPoint(200, 10),wxSize(30, 20));
-	buyCodeCtrl = new wxTextCtrl(this, ID_BUYCODE_CTRL, "000",wxPoint(240, 10),wxSize(80, 20));
+	wxStaticText *buyCodeText = new wxStaticText(this, -1, "代码:",wxPoint(20, 10),wxSize(30, 20));
+	buyCodeCtrl = new wxTextCtrl(this, ID_BUYCODE_CTRL, "00",wxPoint(90, 10),wxSize(80, 20));
+	wxStaticText *buyNameText = new wxStaticText(this, -1, "股票名称:",wxPoint(180, 10),wxSize(60, 20));
+	buyNameCtrl = new wxTextCtrl(this,ID_BUYNANME_CTRL, "",wxPoint(240, 10),wxSize(80, 20));
 
 	wxStaticText *buyPriceText = new wxStaticText(this, -1, "买入价格:",wxPoint(20, 35),wxSize(60, 20));
 	buyPriceCtrl = new wxTextCtrl(this,ID_BUYPRICE_CTRL, "0.0",wxPoint(90, 35),wxSize(80, 20));
@@ -161,8 +161,11 @@ void BuyDialog::OnGetCurPrice(wxCommandEvent& event)
 {
 	string stockId = buyCodeCtrl->GetValue();
 	double price = getPriceByStockId(stockId);
+	string stockName = getNameByStockId(stockId);
 
 	char strPrice[32];
 	sprintf(strPrice,"%.3f", price);
 	buyPriceCtrl->SetValue(strPrice);
+
+	buyNameCtrl->SetValue(stockName.c_str());
 }

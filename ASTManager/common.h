@@ -276,6 +276,7 @@ int getAllStockIdName(vector<string>& vecStockIdName);
 int getAllStockId(vector<string>& vecStockId); //仅获取所有stockid
 
 double getPriceByStockId(string& stockId);//根据stock_id 获取最新价格
+string getNameByStockId(string& stockId); //根据stock_id 获取名称
 
 void qryCashAndShare(int composeId, double& cashVaule, double& curShare); //查询最新的现金和分额
 void InsertCashRecord(int composeId, double changeCash, double cash, double share, string &reasonStr );//插入记录

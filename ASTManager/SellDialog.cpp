@@ -22,10 +22,10 @@ SellDialog::SellDialog(wxWindow *parent,
 					const wxString& name)
 					:wxDialog(parent,id,title,pos,size,style,name)
 {
-	wxStaticText *sellNameText = new wxStaticText(this, -1, "股票名称:",wxPoint(20, 10),wxSize(60, 20));
-	sellNameCtrl = new wxTextCtrl(this,ID_SELLNANME_CTRL, "",wxPoint(90, 10),wxSize(80, 20));
-	wxStaticText *sellCodeText = new wxStaticText(this, -1, "代码:",wxPoint(200, 10),wxSize(30, 20));
-	sellCodeCtrl = new wxTextCtrl(this, ID_SELLCODE_CTRL, "000",wxPoint(240, 10),wxSize(80, 20));
+	wxStaticText *sellCodeText = new wxStaticText(this, -1, "代码:",wxPoint(20, 10),wxSize(30, 20));
+	sellCodeCtrl = new wxTextCtrl(this, ID_SELLCODE_CTRL, "00",wxPoint(90, 10),wxSize(80, 20));
+	wxStaticText *sellNameText = new wxStaticText(this, -1, "股票名称:",wxPoint(180, 10),wxSize(60, 20));
+	sellNameCtrl = new wxTextCtrl(this,ID_SELLNANME_CTRL, "",wxPoint(240, 10),wxSize(80, 20));
 
 	wxStaticText *sellPriceText = new wxStaticText(this, -1, "卖出价格:",wxPoint(20, 35),wxSize(60, 20));
 	sellPriceCtrl = new wxTextCtrl(this,ID_SELLPRICE_CTRL, "0.0",wxPoint(90, 35),wxSize(80, 20));
@@ -49,7 +49,7 @@ SellDialog::SellDialog(wxWindow *parent,
 
 	wxButton* okButton = new wxButton(this, ID_SELLCTRL_OK,"确定", wxPoint(120,170), wxSize(60,30));
 	wxButton* cancelButton = new wxButton(this, ID_SELLCTRL_CANCEL,"取消", wxPoint(210,170), wxSize(60,30));
-
+	
 }
 
 void SellDialog::OnOK(wxCommandEvent& event)
@@ -200,11 +200,12 @@ void SellDialog::OnGetCurPrice(wxCommandEvent& event)
 {
 	string stockId = sellCodeCtrl->GetValue();
 	double price = getPriceByStockId(stockId);
+	string stockName = getNameByStockId(stockId);
 	
 	char strPrice[32];
 	sprintf(strPrice,"%.3f", price);
 	sellPriceCtrl->SetValue(strPrice);
-
+	sellNameCtrl->SetValue(stockName.c_str());
 }
 
 //插入一条卖出记录到数据库
