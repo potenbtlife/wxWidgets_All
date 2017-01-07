@@ -32,11 +32,59 @@ static string gUpdateReview="update trade_info set trade_review=?  where rowid=?
 
 
 //查询最近的份额
-const std::string qryCashSql = "select after_cash, fund_share from cash_flow a where a.compose_id=? and a.change_time=(select max(change_time) from cash_flow where compose_id=a.compose_id)";
-const std::string insertCashSql = "insert into cash_flow(compose_id,change_cash,after_cash,fund_share,change_time,change_reason) values(?,?,?,?,datetime('now'),?)";
+const std::string qryCashSql = "select after_cash, debet, fund_share from cash_flow a where a.compose_id=? and a.change_time=(select max(change_time) from cash_flow where compose_id=a.compose_id)";
+const std::string insertCashSql = "insert into cash_flow(compose_id,oper_type,change_cash,after_cash,debet,fund_share,change_time,change_reason) values(?,?,?,?,?,?,datetime('now'),?)";
 
 //sqlite数据库操作对象
 //extern CDBSqlite gSqlite;
+
+//操作类型，1买入；2卖出；3申购（包含股息收入）；4赎回；5直接调整现金
+enum OPER_TYPE{
+	buyStockType =1,
+	sellStockType=2,
+	buyFundType=3,
+	sellFundType=4,
+	AdjustBalance=5, //手工调整
+	addDebet,
+	subDebet
+};
+
+typedef enum {
+	ADD =1,
+	SUB=2
+} DEBET_OPER_TYPE;
+
+inline string GetNameOfOperType(int type){
+
+	string name="未知类型";
+	switch(type){
+		case buyStockType:
+			name="买入";
+			break;
+		case sellStockType:
+			name="卖出";
+			break;
+		case buyFundType:
+			name="申购";
+			break;
+		case sellFundType:
+			name="赎回";
+			break;
+		case AdjustBalance:
+			name="调整余额";
+			break;
+		case addDebet:
+			name="加负债";
+			break;
+		case subDebet:
+			name="减负债";
+			break;
+		default:
+			break;
+	}
+
+	return name;
+}
 
 enum MainID
 {
@@ -50,11 +98,14 @@ enum MainID
     ID_VALUESHOW_PANEL=1006,
     ID_MARKETVAL_TEXTCTRL=1007,
     ID_CASH_TEXTCTRL=1008,
-    ID_STOCKRATIO_TEXTCTRL=1009,
-    ID_TOTALASSET_TEXTCTRL=1010,
-    ID_RATIOADVICE_TEXTCTRL=1011,
+	ID_DEBET_TEXTCTRL,
+    ID_STOCKRATIO_TEXTCTRL,
+    ID_TOTALASSET_TEXTCTRL,
+	ID_NETASSET_TEXTCTRL,
+    ID_RATIOADVICE_TEXTCTRL,
     ID_NETVALUE_TEXTCTRL,
     ID_SHARE_TEXTCTRL,
+	ID_REVERAGE_TEXTCTRL,
     ID_HKCOM,
     ID_ACOM,
     ID_FIXEDCOM,
@@ -64,6 +115,9 @@ enum MainID
     ID_ADJUSTCASH,
     ID_BUG_FOUND,
     ID_SELL_FOUND,
+	ID_ADD_DEBET_FOUND,
+	ID_SUB_DEBET_FOUND,
+	ID_OPER_HISTORY,
     ID_REPORT_MENU,
     ID_DOWNLOAD_YEAR_THREETBL,
     ID_DOWNLOAD_MID_THREETBL,
@@ -114,7 +168,7 @@ struct GoodsDet{
 */
 void setPageFromVector2GridTable(vector<LogDataDet>& vSrc, wxGridStringTable& gridStrTab, int numInOnePage, int pageNum);
 
-inline int getRowNumInOnePage(vector<LogDataDet>& vSrc, int numInOnePage, int pageNum)
+inline int getRowNumInOnePage(int allNum, int numInOnePage, int pageNum)
 {
 	/*int test5 = (numInOnePage * (pageNum - 1));
 	int test6 = vSrc.size();
@@ -124,7 +178,7 @@ inline int getRowNumInOnePage(vector<LogDataDet>& vSrc, int numInOnePage, int pa
 	bool test4 = test1 > 0;
 	int test3 = (vSrc.size() - numInOnePage * (pageNum - 1));*/
 
-	int intervalRowNum = (vSrc.size() - numInOnePage * (pageNum - 1));//比较用数据行数计算出来的当页行数 与 前一页的所有行数比较；如果小于0，返回0
+	int intervalRowNum = (allNum - numInOnePage * (pageNum - 1));//比较用数据行数计算出来的当页行数 与 前一页的所有行数比较；如果小于0，返回0
 	int VecRowNum = (intervalRowNum > 0) ? intervalRowNum : 0;
 	
 	return VecRowNum < numInOnePage ? VecRowNum : numInOnePage;
@@ -278,8 +332,10 @@ int getAllStockId(vector<string>& vecStockId); //仅获取所有stockid
 double getPriceByStockId(string& stockId);//根据stock_id 获取最新价格
 string getNameByStockId(string& stockId); //根据stock_id 获取名称
 
-void qryCashAndShare(int composeId, double& cashVaule, double& curShare); //查询最新的现金和分额
-void InsertCashRecord(int composeId, double changeCash, double cash, double share, string &reasonStr );//插入记录
+void qryCashAndShare(int composeId, double& cashVaule, double& debet, double& curShare); //查询最新的现金和分额
+
+//operType，1买入；2卖出；3申购（包含股息收入）；4赎回；5直接调整现金
+void InsertCashRecord(int composeId, int operType, double changeCash, double afterCash, double debet, double share, string &reasonStr );//插入记录
 
 void qryValueInfo(int composeId, string& datetime,string& value_advice,string& detailInfo,double& fundShare,double& fundValue, double& marketvalue,double& cash);
 

@@ -35,9 +35,10 @@ private:
 
     wxTextCtrl* m_nowCashCtrl; //调整现金值的控件
     wxTextCtrl* m_nowShareCtrl; //调整基金份额的控件
+	wxTextCtrl* m_debetCtrl; //债务展示控件
     wxTextCtrl* m_reasonCtrl;
 
-    double m_curCashVaule, m_curShare;
+	double m_curCashVaule, m_curShare, m_debet;
 };
 
 

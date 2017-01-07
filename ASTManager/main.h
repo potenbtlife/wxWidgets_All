@@ -62,7 +62,10 @@ class MyFrame: public wxFrame
         void OnAdjustCash(wxCommandEvent& event);
         void OnBuyFound(wxCommandEvent& event);
         void OnSellFound(wxCommandEvent& event);
-		void OnExit(wxCommandEvent& event);
+		void AddDebet(wxCommandEvent& event);
+		void SubDebet(wxCommandEvent& event);
+		void OnOperHistory(wxCommandEvent& event);
+		//void OnExit(wxCommandEvent& event);
 
         void UpdateAdviceInfoInDb();
         void OnClose(wxCloseEvent& event); //右上角的关闭按钮，隐藏不退出
@@ -98,9 +101,9 @@ class MyFrame: public wxFrame
         void RefreshDataFromDB();
 
         //填充市值界面, 并输出参数
-        void GetValueFromDb(int composeId, double& marketvalue,double& cash,string& datetime,double& fundShare,double& fundValue);
+        void GetCashDebetFromDb(int composeId, double& marketvalue,double& cash, double& debet,string& datetime,double& fundShare,double& fundValue);
 
-        void SetValueText(double marketvalue, double cash, string datetime, double fundShare, double fundValue );
+        void SetValueText(double marketvalue, double cash, double debet, string datetime, double fundShare, double fundValue );
         void RefreshAdvice();
         void WriteBalanceToDb(string stock_id, int reportType, vector<BalanceData>& vecOneAllBalance); //向数据库登记资产负债表数据
         void WriteSunYiToDb(string stock_id, int reportType, vector<SunYiData>& vecOneAllSunYi); //向数据库登记损益表数据
@@ -126,10 +129,13 @@ class MyFrame: public wxFrame
 
         wxTextCtrl* marketValTextCtrl;
         wxTextCtrl* cashTextCtrl;
+		wxTextCtrl* debetTextCtrl;
         wxTextCtrl* stockRatioTextCtrl;
         wxTextCtrl* totalAssetTextCtrl;
+		wxTextCtrl* netAssetTextCtrl;
         wxTextCtrl* netValueTextCtrl;
         wxTextCtrl* shareTextCtrl;
+		wxTextCtrl* leverageTextCtrl;
         wxTextCtrl* adviceTextCtrl;
         wxTextCtrl* timeTextCtrl;
         wxMenu *composeMenu; //菜单栏组合控件

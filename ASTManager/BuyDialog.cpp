@@ -135,8 +135,8 @@ void BuyDialog::OnCancel(wxCommandEvent& event)
 //更新临时现金份额表
 int BuyDialog::BuyUpdateCash(double changeCash){
 
-    double curCash=0, curShare=0;
-    qryCashAndShare(Runtime::getInstance()->CurComposeID, curCash, curShare);
+    double curCash=0, debet=0, curShare=0;
+    qryCashAndShare(Runtime::getInstance()->CurComposeID, curCash, debet, curShare);
     double allCash = curCash - changeCash;
     if (allCash < -0.005) {
         wxMessageBox("现金不够，请先调整现金！");
@@ -145,7 +145,7 @@ int BuyDialog::BuyUpdateCash(double changeCash){
 
     string stockName = buyNameCtrl->GetValue();
     string reasonStr = "买入:" + trim(stockName);
-    InsertCashRecord(Runtime::getInstance()->CurComposeID, -1*changeCash, allCash, curShare, reasonStr);
+    InsertCashRecord(Runtime::getInstance()->CurComposeID, buyStockType, -1*changeCash, allCash, debet, curShare, reasonStr);
 
     //更新界面显示
     wxTextCtrl* cashCtrl = (wxTextCtrl*)wxWindowBase::FindWindowById(ID_CASH_TEXTCTRL);

@@ -9,6 +9,8 @@
 #include "BuyOrSellFoundDialog.h"
 #include "FindShotFrame.h"
 #include "DownLoadOneTbl.h"
+#include "OperHistoryDialog.h"
+#include "DebetOperDialog.h"
 
 IMPLEMENT_APP(MyApp);
 
@@ -18,6 +20,9 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(ID_ADJUSTCASH, MyFrame::OnAdjustCash)
     EVT_MENU(ID_BUG_FOUND, MyFrame::OnBuyFound)
     EVT_MENU(ID_SELL_FOUND, MyFrame::OnSellFound)
+	EVT_MENU(ID_ADD_DEBET_FOUND, MyFrame::AddDebet)
+	EVT_MENU(ID_SUB_DEBET_FOUND, MyFrame::SubDebet)
+	EVT_MENU(ID_OPER_HISTORY, MyFrame::OnOperHistory)
     EVT_MENU(ID_REPORT_MENU, MyFrame::OnShowValueReport)
     EVT_MENU(ID_DOWNLOAD_YEAR_THREETBL, MyFrame::DownLoadYearThreeTbl)
     EVT_MENU(ID_DOWNLOAD_MID_THREETBL, MyFrame::DownLoadMidThreeTbl)
@@ -27,7 +32,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(ID_SHOW_THREE_TABLE, MyFrame::OnShowThreeTable)
     EVT_MENU(ID_FIND_ASHOT, MyFrame::OnFindAShot)
     EVT_MENU(ID_CALCINDEX_TABLE, MyFrame::OnReCalcFinanceIndex)
-    EVT_MENU(wxID_EXIT,  MyFrame::OnExit)
+    //EVT_MENU(wxID_EXIT,  MyFrame::OnExit)
     EVT_MENU(wxID_ABOUT, MyFrame::OnAbout)
     EVT_MENU(ID_HKCOM,   MyFrame::OnHKCompose)
     EVT_MENU(ID_ACOM,   MyFrame::OnACompose)
@@ -45,7 +50,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_CLOSE(OnClose)
 END_EVENT_TABLE()
 
-const std::string m_qryCashSql = "select after_cash from cash_flow a where a.compose_id=? and a.change_time=(select max(change_time) from cash_flow where compose_id=a.compose_id)";
+const std::string m_qryCashSql = "select after_cash,debet,fund_share from cash_flow a where a.compose_id=? and a.change_time=(select max(change_time) from cash_flow where compose_id=a.compose_id)";
 const std::string m_qryAdviceSql = "select opt_advice from tmp_info where compose_id=?";
 const std::string m_updateAdviceSql = "update tmp_info set opt_advice = ? where compose_id=?";
 
@@ -81,7 +86,7 @@ wxGridStringTable* dataSourceGoods;
 const int compostID2menuID[10] = { -1, ID_HKCOM, ID_ACOM, ID_ALLCOM};
 
 bool MyApp::OnInit() {
-
+	
     m_checker = new wxSingleInstanceChecker;
     m_checker->Create(wxApp::GetAppName(), wxGetUserId());
 
@@ -140,7 +145,10 @@ MyFrame::MyFrame(wxWindowID frameID, const wxString& title, const wxPoint& pos, 
 	menuFile->Append(ID_BUG_FOUND, "&申购", "买入基金");
 	menuFile->Append(ID_SELL_FOUND, "&赎回", "卖出基金");
 	menuFile->AppendSeparator();
-	menuFile->Append(wxID_EXIT);
+	menuFile->Append(ID_ADD_DEBET_FOUND, "&加杠杆", "借入资金");
+	menuFile->Append(ID_SUB_DEBET_FOUND, "&减杠杆", "归还资金");
+	menuFile->AppendSeparator();
+	menuFile->Append(ID_OPER_HISTORY, "&操作记录", "查看操作记录，并可回滚最近一次操作");
 
 
 	//组合菜单
@@ -216,23 +224,38 @@ MyFrame::MyFrame(wxWindowID frameID, const wxString& title, const wxPoint& pos, 
 	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "现金:", wxPoint(0, 22), wxSize(60, 20)), 0, wxALL);
 	cashTextCtrl = new wxTextCtrl(valuePanel, ID_CASH_TEXTCTRL, "", wxPoint(60, 22), wxSize(100, 20), wxTE_READONLY);
 	sizer1->Add(cashTextCtrl, 0, wxALL);
-	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "仓位占比:", wxPoint(0, 44), wxSize(60, 20)), 0, wxALL);
-	stockRatioTextCtrl = new wxTextCtrl(valuePanel, ID_STOCKRATIO_TEXTCTRL, "", wxPoint(60, 44), wxSize(100, 20), wxTE_READONLY);
+
+	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "负债:", wxPoint(0, 44), wxSize(60, 20)), 0, wxALL);
+	debetTextCtrl = new wxTextCtrl(valuePanel, ID_DEBET_TEXTCTRL, "0", wxPoint(60, 44), wxSize(100, 20), wxTE_READONLY);
+	sizer1->Add(debetTextCtrl, 0, wxALL);
+
+	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "仓位占比:", wxPoint(0, 66), wxSize(60, 20)), 0, wxALL);
+	stockRatioTextCtrl = new wxTextCtrl(valuePanel, ID_STOCKRATIO_TEXTCTRL, "", wxPoint(60, 66), wxSize(100, 20), wxTE_READONLY);
 	sizer1->Add(stockRatioTextCtrl, 0, wxALL);
-	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "总资产:", wxPoint(0, 66), wxSize(60, 20)), 0, wxALL);
-	totalAssetTextCtrl = new wxTextCtrl(valuePanel, ID_TOTALASSET_TEXTCTRL, "", wxPoint(60, 66), wxSize(100, 20), wxTE_READONLY);
+	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "总资产:", wxPoint(0, 88), wxSize(60, 20)), 0, wxALL);
+	totalAssetTextCtrl = new wxTextCtrl(valuePanel, ID_TOTALASSET_TEXTCTRL, "", wxPoint(60, 88), wxSize(100, 20), wxTE_READONLY);
 	sizer1->Add(totalAssetTextCtrl, 0, wxALL);
-	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "净值:", wxPoint(0, 88), wxSize(60, 20)), 0, wxALL);
-	netValueTextCtrl = new wxTextCtrl(valuePanel, ID_NETVALUE_TEXTCTRL, "", wxPoint(60, 88), wxSize(100, 20), wxTE_READONLY);
+
+	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "净资产:", wxPoint(0, 110), wxSize(60, 20)), 0, wxALL);
+	netAssetTextCtrl = new wxTextCtrl(valuePanel, ID_NETASSET_TEXTCTRL, "", wxPoint(60, 110), wxSize(100, 20), wxTE_READONLY);
+	sizer1->Add(netAssetTextCtrl, 0, wxALL);
+
+	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "净值:", wxPoint(0, 132), wxSize(60, 20)), 0, wxALL);
+	netValueTextCtrl = new wxTextCtrl(valuePanel, ID_NETVALUE_TEXTCTRL, "", wxPoint(60, 132), wxSize(100, 20), wxTE_READONLY);
 	sizer1->Add(netValueTextCtrl, 0, wxALL);
-	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "份额:", wxPoint(0, 110), wxSize(60, 20)), 0, wxALL);
-	shareTextCtrl = new wxTextCtrl(valuePanel, ID_SHARE_TEXTCTRL, "", wxPoint(60, 110), wxSize(100, 20), wxTE_READONLY);
+	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "份额:", wxPoint(0, 154), wxSize(60, 20)), 0, wxALL);
+	shareTextCtrl = new wxTextCtrl(valuePanel, ID_SHARE_TEXTCTRL, "", wxPoint(60, 154), wxSize(100, 20), wxTE_READONLY);
 	sizer1->Add(shareTextCtrl, 0, wxALL);
-	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "时间:", wxPoint(0, 132), wxSize(60, 20)), 0, wxALL);
-	timeTextCtrl = new wxTextCtrl(valuePanel, ID_TOTALASSET_TEXTCTRL, "", wxPoint(60, 132), wxSize(100, 20), wxTE_READONLY);
+
+	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "杠杆系数:", wxPoint(0, 176), wxSize(60, 20)), 0, wxALL);
+	leverageTextCtrl = new wxTextCtrl(valuePanel, ID_REVERAGE_TEXTCTRL, "", wxPoint(60, 176), wxSize(100, 20), wxTE_READONLY);
+	sizer1->Add(leverageTextCtrl, 0, wxALL);
+
+	sizer1->Add(new wxStaticText(valuePanel, wxID_ANY, "时间:", wxPoint(0, 198), wxSize(60, 20)), 0, wxALL);
+	timeTextCtrl = new wxTextCtrl(valuePanel, ID_TOTALASSET_TEXTCTRL, "", wxPoint(60, 198), wxSize(100, 20), wxTE_READONLY);
 	sizer1->Add(timeTextCtrl, 0, wxALL);
 
-	value_sizer->Add(valuePanel, 0, wxALL, 1);
+	value_sizer->Add(valuePanel, 0, wxALL, 10);
 
 	//存量资产展示界面
 	gridGoods = new wxGrid(this, ID_GOODS_GRID, wxPoint(0, 0));
@@ -273,11 +296,11 @@ MyFrame::MyFrame(wxWindowID frameID, const wxString& title, const wxPoint& pos, 
 	modify_button_sizer->Add(new wxButton(this, ID_DELETE_BUTTON, "删除"), 0, wxALL, 6);
 	//button_sizer->Add(100, 0, 0);
 
-	bottom_Main_sizer->Add(gridGoods, 0, wxALIGN_LEFT | wxEXPAND);
-	bottom_Main_sizer->Add(value_sizer, 0, wxALIGN_LEFT | wxEXPAND);
-	bottom_Main_sizer->Add(search_sizer, 0, wxALIGN_LEFT | wxEXPAND);
-	bottom_Main_sizer->Add(button_sizer, 0, wxEXPAND);
-	bottom_Main_sizer->Add(modify_button_sizer, 0, wxEXPAND);
+	bottom_Main_sizer->Add(gridGoods, 3, wxALIGN_LEFT | wxEXPAND);
+	bottom_Main_sizer->Add(value_sizer, 1, wxALIGN_LEFT | wxEXPAND);
+	bottom_Main_sizer->Add(search_sizer, 1, wxALIGN_LEFT | wxEXPAND);
+	bottom_Main_sizer->Add(button_sizer, 1, wxEXPAND);
+	bottom_Main_sizer->Add(modify_button_sizer, 1, wxEXPAND);
 
 	topsizer->Add(bottom_Main_sizer, 0, wxEXPAND);
 
@@ -289,6 +312,7 @@ MyFrame::MyFrame(wxWindowID frameID, const wxString& title, const wxPoint& pos, 
 
 	SetSizerAndFit(topsizer);
 	SetBackgroundColour(*wxLIGHT_GREY);
+
 }
 
 
@@ -619,7 +643,7 @@ void MyFrame::WriteCashFlowToDb(string stock_id, int reportType, vector<CashFlow
 
     for (int i = 0; i < vecOneAllCashFlow.size(); ++i) {
         if (QryUniqueRptData(chekcUniqueCashFlowRptSql, vecOneAllCashFlow[i].stock_id, vecOneAllCashFlow[i].report_time)) { //已有
-            continue;;
+            continue;
         }
 
         gSqlite.setSql(insertCashFlowSql);
@@ -651,12 +675,13 @@ void MyFrame::WriteCashFlowToDb(string stock_id, int reportType, vector<CashFlow
 
 }
 
-void MyFrame::OnExit(wxCommandEvent& event) {
+/*void MyFrame::OnExit(wxCommandEvent& event) {
     
     UpdateAdviceInfoInDb();
 
     Close(true);
-}
+}*/
+
 void MyFrame::OnAbout(wxCommandEvent& event) {
     wxMessageBox("This is a wxWidgets' Hello world sample",
                  "About Hello World", wxOK | wxICON_INFORMATION);
@@ -682,22 +707,40 @@ void MyFrame::OnSell(wxCommandEvent& event) {
 
 //调整现金余额
 void MyFrame::OnAdjustCash(wxCommandEvent& event) {
-    adjustCashDialog = new AdjustCashDialog(this, wxID_ANY, "现金调整 对话框", wxPoint(0, 0), wxSize(300, 220), wxDEFAULT_DIALOG_STYLE, "11111");
+    adjustCashDialog = new AdjustCashDialog(this, wxID_ANY, "现金调整 对话框", wxPoint(0, 0), wxSize(300, 260), wxDEFAULT_DIALOG_STYLE, "11111");
     adjustCashDialog->Centre();
     adjustCashDialog->Show();
 
 }
 
 void MyFrame::OnBuyFound(wxCommandEvent& event) {
-    BuyOrSellFoundDialog* bfoundDialog = new BuyOrSellFoundDialog(0, this, wxID_ANY, "申购 对话框", wxPoint(0, 0), wxSize(300, 200), wxDEFAULT_DIALOG_STYLE);
+    BuyOrSellFoundDialog* bfoundDialog = new BuyOrSellFoundDialog(buyFundType, this, wxID_ANY, "申购 对话框", wxPoint(0, 0), wxSize(300, 200), wxDEFAULT_DIALOG_STYLE);
     bfoundDialog->Centre();
     bfoundDialog->Show();
 }
 
 void MyFrame::OnSellFound(wxCommandEvent& event) {
-    BuyOrSellFoundDialog* bfoundDialog = new BuyOrSellFoundDialog(1, this, wxID_ANY, "赎回 对话框", wxPoint(0, 0), wxSize(300, 200), wxDEFAULT_DIALOG_STYLE);
+    BuyOrSellFoundDialog* bfoundDialog = new BuyOrSellFoundDialog(sellFundType, this, wxID_ANY, "赎回 对话框", wxPoint(0, 0), wxSize(300, 200), wxDEFAULT_DIALOG_STYLE);
     bfoundDialog->Centre();
     bfoundDialog->Show();
+}
+
+void MyFrame::AddDebet(wxCommandEvent& event) {
+	DebetOperDialog* debetDialog = new DebetOperDialog(DEBET_OPER_TYPE::ADD, this, wxID_ANY, "加杠杆 对话框", wxPoint(0, 0), wxSize(300, 200), wxDEFAULT_DIALOG_STYLE);
+	debetDialog->Centre();
+	debetDialog->Show();
+}
+
+void MyFrame::SubDebet(wxCommandEvent& event) {
+	DebetOperDialog* debetDialog = new DebetOperDialog(DEBET_OPER_TYPE::SUB, this, wxID_ANY, "减杠杆 对话框", wxPoint(0, 0), wxSize(300, 200), wxDEFAULT_DIALOG_STYLE);
+	debetDialog->Centre();
+	debetDialog->Show();
+}
+
+void MyFrame::OnOperHistory(wxCommandEvent& event){
+	OperHistoryDialog* operHistoryDialog = new OperHistoryDialog(this, wxID_ANY, "操作历史 对话框", wxPoint(0, 0), wxSize(800, 380), wxDEFAULT_DIALOG_STYLE);
+	operHistoryDialog->Centre();
+	operHistoryDialog->Show();
 }
 
 void MyFrame::OnShowValueReport(wxCommandEvent& event) {
@@ -1076,13 +1119,13 @@ void MyFrame::OnClose(wxCloseEvent& event) {
 }
 
 //填充市值信息，all_value输出参数
-void MyFrame::GetValueFromDb(int composeId, double& marketvalue,double& cash,string& datetime,double& fundShare,double& fundValue) {
+void MyFrame::GetCashDebetFromDb(int composeId, double& marketvalue,double& cash, double& debet,string& datetime,double& fundShare,double& fundValue) {
 
     string value_advice, detailInfo="";
     double marketvalue_nouse=0, cash_nouse=0;
     qryValueInfo(composeId, datetime, value_advice, detailInfo, fundShare, fundValue, marketvalue_nouse, cash_nouse);//获取value_info数据
 
-    //获取现金和份额
+    //获取现金余额、负债余额、基金份额
     gSqlite.setSql(m_qryCashSql);
 
     if (gSqlite.prepare() < 0) {
@@ -1094,9 +1137,12 @@ void MyFrame::GetValueFromDb(int composeId, double& marketvalue,double& cash,str
 
     if (1 == gSqlite.step()) {
         cash = gSqlite.getColumnDouble(0);
+		debet = gSqlite.getColumnDouble(1);
+		fundShare  = gSqlite.getColumnDouble(2); //基金份额从cash_flow表中取，此表的数据才是最新的
     }
 
     gSqlite.finalize();
+
 
     if (trim(detailInfo) == "") { //总资产组合情况
         marketvalue = marketvalue_nouse;
@@ -1113,11 +1159,11 @@ void MyFrame::GetValueFromDb(int composeId, double& marketvalue,double& cash,str
 void MyFrame::RefreshGoodsAndValue() {
 
     //更新市值信息
-    double marketvalue=0, cash=0, fundShare=0, fundValue=0;
+    double marketvalue=0, cash=0, debet=0, fundShare=0, fundValue=0;
     string datetime;
-    GetValueFromDb(Runtime::getInstance()->CurComposeID, marketvalue, cash, datetime, fundShare, fundValue);
+    GetCashDebetFromDb(Runtime::getInstance()->CurComposeID, marketvalue, cash, debet, datetime, fundShare, fundValue);
 
-    SetValueText(marketvalue, cash, datetime, fundShare, fundValue);
+    SetValueText(marketvalue, cash, debet, datetime, fundShare, fundValue);
 
     RefreshAdvice(); //更新建议界面
 
@@ -1203,7 +1249,8 @@ void MyFrame::UpdateAdviceInfoInDb()
     }
 
     string tmpAdvice = adviceTextCtrl->GetValue();
-    gSqlite.bindString(1, tmpAdvice.c_str(), -1, SQLITE_STATIC);
+	string test = stringTrim(tmpAdvice);
+    gSqlite.bindString(1, stringTrim(tmpAdvice).c_str(), -1, SQLITE_STATIC);
     gSqlite.bindInt(2, Runtime::getInstance()->CurComposeID);
 
     if (gSqlite.step() < 0) {
@@ -1246,32 +1293,49 @@ int MyFrame::ResetAllCurrentCompose() {
     return 1;
 }
 
-void MyFrame::SetValueText(double marketvalue, double cash, string datetime, double fundShare, double fundValue )
+void MyFrame::SetValueText(double marketvalue, double cash, double debet, string datetime, double fundShare, double fundValue )
 {
     double all_value = marketvalue + cash;
 
-    double ratio = all_value == 0 ? all_value : marketvalue / all_value;
-    char cRatio[16];
-    sprintf(cRatio, "%.2f%s", ratio * 100, "%");
-
     char cMarketvalue[128];
     sprintf(cMarketvalue, "%.2f", marketvalue);
-    char cCash[128];
-    sprintf(cCash, "%.2f", cash);
-    char cAllValue[128];
-    sprintf(cAllValue, "%.2f", all_value);
+    marketValTextCtrl->SetValue(cMarketvalue); //设置市值
 
-    marketValTextCtrl->SetValue(cMarketvalue);
-    cashTextCtrl->SetValue(cCash);
-    stockRatioTextCtrl->SetValue(cRatio);
-    totalAssetTextCtrl->SetValue(cAllValue);
-    timeTextCtrl->SetValue(datetime);
-    char cFundShare[128];
+	char cCash[128];
+	sprintf(cCash, "%.2f", cash);
+    cashTextCtrl->SetValue(cCash); //设置现金余额
+
+	char ctmp[128];
+	sprintf(ctmp, "%.2f", debet);
+	debetTextCtrl->SetValue(ctmp); //设置负债余额
+
+	double ratio = all_value == 0 ? all_value : marketvalue / all_value;
+	char cRatio[16];
+	sprintf(cRatio, "%.2f%s", ratio * 100, "%");
+    stockRatioTextCtrl->SetValue(cRatio); //设置仓位占比
+
+	char cAllValue[128];
+	sprintf(cAllValue, "%.2f", all_value);
+    totalAssetTextCtrl->SetValue(cAllValue);//设置总资产
+
+	memset(ctmp,0,sizeof(ctmp));
+	sprintf(ctmp, "%.2f", (all_value-debet));
+	netAssetTextCtrl->SetValue(ctmp);//设置净资产
+
+	char cFundShare[128];
     sprintf(cFundShare, "%.2f", fundShare);
-    shareTextCtrl->SetValue(cFundShare);
-    char cFundValue[128];
+    shareTextCtrl->SetValue(cFundShare); //设置基金份额
+    
+	double gangganxs = (marketvalue+cash)/(marketvalue+cash-debet);
+	memset(ctmp,0,sizeof(ctmp));
+	sprintf(ctmp, "%.2f%%", gangganxs*100);
+	leverageTextCtrl->SetValue(ctmp); //设置杠杆系数
+
+	char cFundValue[128];
     sprintf(cFundValue, "%.4f", fundValue);
-    netValueTextCtrl->SetValue(cFundValue);
+    netValueTextCtrl->SetValue(cFundValue);//设置基金净值
+
+	timeTextCtrl->SetValue(datetime); //设置时间
 }
 
 void DeleteFinanceIndexFromDb(string reportType) {

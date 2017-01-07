@@ -26,20 +26,28 @@ AdjustCashDialog::AdjustCashDialog(wxWindow *parent,
     wxStaticText *fundShareText = new wxStaticText(this, -1, "调整后基金份额:",wxPoint(20, 60),wxSize(100, 20));
     m_nowShareCtrl = new wxTextCtrl(this,wxID_ANY, "",wxPoint(120, 60),wxSize(100, 20));
     
-    new wxStaticText(this, -1, "调整原因:",wxPoint(20, 85),wxSize(100, 20));
-    m_reasonCtrl = new wxTextCtrl(this,wxID_ANY, "",wxPoint(120, 85),wxSize(120, 60), wxTE_MULTILINE);
+	new wxStaticText(this, -1, "调整后债务:",wxPoint(20, 85),wxSize(100, 20));
+	m_debetCtrl = new wxTextCtrl(this,wxID_ANY, "",wxPoint(120, 85),wxSize(100, 20));
 
-    wxButton* okButton = new wxButton(this, ID_ADJUSTCASHCTRL_OK,"确定", wxPoint(70,155), wxSize(60,30));
-    wxButton* cancelButton = new wxButton(this, ID_ADJUSTCASHCTRL_CANCEL,"取消", wxPoint(160,155), wxSize(60,30));
+    new wxStaticText(this, -1, "调整原因:",wxPoint(20, 110),wxSize(100, 20));
+    m_reasonCtrl = new wxTextCtrl(this,wxID_ANY, "",wxPoint(120, 110),wxSize(120, 60), wxTE_MULTILINE);
 
-    qryCashAndShare(Runtime::getInstance()->CurComposeID, m_curCashVaule, m_curShare);
+    wxButton* okButton = new wxButton(this, ID_ADJUSTCASHCTRL_OK,"确定", wxPoint(70,190), wxSize(60,30));
+    wxButton* cancelButton = new wxButton(this, ID_ADJUSTCASHCTRL_CANCEL,"取消", wxPoint(160,190), wxSize(60,30));
+
+    qryCashAndShare(Runtime::getInstance()->CurComposeID, m_curCashVaule, m_debet, m_curShare);
     
-    char curCashChar[128] = {0}, shareChar[128] = {0};
-    sprintf(curCashChar, "%.2lf", m_curCashVaule);
-    curCashCtrl->SetValue(curCashChar);
-    sprintf(shareChar, "%.2lf", m_curShare);
-    m_nowShareCtrl->SetValue(shareChar);
+    char ctmp[128] = {0};
+    sprintf(ctmp, "%.2lf", m_curCashVaule);
+    curCashCtrl->SetValue(ctmp); //现金控件
 
+	memset(ctmp,0,sizeof(ctmp));
+    sprintf(ctmp, "%.2lf", m_curShare);
+    m_nowShareCtrl->SetValue(ctmp); //基金份额控件
+	
+	memset(ctmp,0,sizeof(ctmp));
+	sprintf(ctmp, "%.2lf", m_debet);
+	m_debetCtrl->SetValue(ctmp); //债务控件
 }
 
 void AdjustCashDialog::OnOK(wxCommandEvent& event)
@@ -47,10 +55,12 @@ void AdjustCashDialog::OnOK(wxCommandEvent& event)
     string modifyCashStr = m_nowCashCtrl->GetValue();
     string modifyShareStr = m_nowShareCtrl->GetValue();
     string reasonStr = m_reasonCtrl->GetValue();
+	string strDebet = m_debetCtrl->GetValue();
 
-    double modifyCash = 0, modifyShare = 0;
+    double modifyCash = 0, modifyShare = 0, modifyDebet=0;
     sscanf(modifyCashStr.c_str(), "%lf", &modifyCash);
     sscanf(modifyShareStr.c_str(), "%lf", &modifyShare);
+	sscanf(strDebet.c_str(), "%lf", &modifyDebet);
 
     if( (modifyCash<0.005 && modifyCash>-0.005) || "" == reasonStr || (modifyShare < 0.05 && modifyShare > -0.05)){
         wxMessageBox( "所有选项不能为空，请重新输入！","输入错误！", wxOK | wxICON_ERROR );
@@ -61,7 +71,7 @@ void AdjustCashDialog::OnOK(wxCommandEvent& event)
     if (diffShare < 0.5 && diffShare > -0.5) { //如果由于转换导致份额的精度丢失，使用原来的份额值以防止精度丢失。
         modifyShare = m_curShare;
     }
-    InsertCashRecord(Runtime::getInstance()->CurComposeID, 0, modifyCash, modifyShare, reasonStr);//变更金额先置为0，以后再补充
+    InsertCashRecord(Runtime::getInstance()->CurComposeID, AdjustBalance, (modifyCash-m_curCashVaule), modifyCash,modifyDebet, modifyShare, reasonStr);//变更金额先置为0，以后再补充
 
     MyFrame* myFrame = (MyFrame*)wxWindowBase::FindWindowById(ID_MAIN_FRAME);
     myFrame->RefreshGoodsAndValue();

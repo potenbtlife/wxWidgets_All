@@ -175,16 +175,16 @@ void setPageFromVector2GridTable(vector<LogDataDet>& vSrc, wxGridStringTable& gr
 
 	gridStrTab.Clear();
 	//规整gridStringTable中的行数为numInOnePage
-	if(gridStrTab.GetNumberRows() > getRowNumInOnePage(tmpSrc, numInOnePage, pageNum)){
-		gridStrTab.DeleteRows(0, gridStrTab.GetNumberRows() - getRowNumInOnePage(tmpSrc, numInOnePage, pageNum));
+	if(gridStrTab.GetNumberRows() > getRowNumInOnePage(tmpSrc.size(), numInOnePage, pageNum)){
+		gridStrTab.DeleteRows(0, gridStrTab.GetNumberRows() - getRowNumInOnePage(tmpSrc.size(), numInOnePage, pageNum));
 
 	}else{
-		gridStrTab.AppendRows(getRowNumInOnePage(tmpSrc, numInOnePage, pageNum) - gridStrTab.GetNumberRows());
+		gridStrTab.AppendRows(getRowNumInOnePage(tmpSrc.size(), numInOnePage, pageNum) - gridStrTab.GetNumberRows());
 	}
 
 	vector<LogDataDet>::iterator iter = tmpSrc.begin();
 	iter += numInOnePage * (pageNum - 1);// 跳转到pageNum页的记录
-	for(int i = 0; i < getRowNumInOnePage(tmpSrc, numInOnePage, pageNum) && iter != tmpSrc.end(); ++i, ++iter){
+	for(int i = 0; i < getRowNumInOnePage(tmpSrc.size(), numInOnePage, pageNum) && iter != tmpSrc.end(); ++i, ++iter){
 		gridStrTab.SetValue(i,0,iter->stock_name);
 		gridStrTab.SetValue(i,1,iter->stock_id);
 		gridStrTab.SetValue(i,2,iter->buy_time);
@@ -366,7 +366,7 @@ string getNameByStockId(string& stockId){
 }
 
 
-void qryCashAndShare(int composeId, double& cashVaule, double& curShare)
+void qryCashAndShare(int composeId, double& cashVaule, double& debet, double& curShare)
 {
     //查询现金
     Runtime::getInstance()->sqlite.setSql(qryCashSql);
@@ -375,23 +375,26 @@ void qryCashAndShare(int composeId, double& cashVaule, double& curShare)
 
     if ( 1 == Runtime::getInstance()->sqlite.step() ) {
         cashVaule = Runtime::getInstance()->sqlite.getColumnDouble(0);
-        curShare = Runtime::getInstance()->sqlite.getColumnDouble(1);
+		debet = Runtime::getInstance()->sqlite.getColumnDouble(1);
+        curShare = Runtime::getInstance()->sqlite.getColumnDouble(2);
     }/*else{
         wxMessageBox("获取当前现金值失败！"+ Runtime::getInstance()->sqlite.errString);
     }*/
 }
 
 
-void InsertCashRecord(int composeId, double changeCash, double afterCash, double share, string &reasonStr )
+void InsertCashRecord(int composeId, int operType, double changeCash, double afterCash, double debet, double share, string &reasonStr )
 {
     //插入现金值
     Runtime::getInstance()->sqlite.setSql(insertCashSql);
     Runtime::getInstance()->sqlite.prepare();
     Runtime::getInstance()->sqlite.bindInt(1, composeId);
-	Runtime::getInstance()->sqlite.bindDouble(2, changeCash);
-    Runtime::getInstance()->sqlite.bindDouble(3, afterCash);
-    Runtime::getInstance()->sqlite.bindDouble(4, share);
-    Runtime::getInstance()->sqlite.bindString(5, reasonStr.c_str(), -1, SQLITE_STATIC);
+	Runtime::getInstance()->sqlite.bindInt(2, operType);
+	Runtime::getInstance()->sqlite.bindDouble(3, changeCash);
+    Runtime::getInstance()->sqlite.bindDouble(4, afterCash);
+	Runtime::getInstance()->sqlite.bindDouble(5, debet);
+    Runtime::getInstance()->sqlite.bindDouble(6, share);
+    Runtime::getInstance()->sqlite.bindString(7, reasonStr.c_str(), -1, SQLITE_STATIC);
 
     if(Runtime::getInstance()->sqlite.step() < 0){
         wxMessageBox(Runtime::getInstance()->sqlite.errString);

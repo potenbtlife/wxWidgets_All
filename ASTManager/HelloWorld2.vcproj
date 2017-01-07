@@ -198,6 +198,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DebetOperDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DownLoadOneTbl.cpp"
 				>
 			</File>
@@ -211,6 +215,10 @@
 			</File>
 			<File
 				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OperHistoryDialog.cpp"
 				>
 			</File>
 			<File
@@ -276,6 +284,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DebetOperDialog.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DownLoadNewsDialog.h"
 				>
 			</File>
@@ -301,6 +313,10 @@
 			</File>
 			<File
 				RelativePath=".\main.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OperHistoryDialog.h"
 				>
 			</File>
 			<File

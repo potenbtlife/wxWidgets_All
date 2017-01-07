@@ -22,7 +22,7 @@ public:
         long  style = wxDEFAULT_DIALOG_STYLE,
         const wxString &  name = wxDialogNameStr) : wxDialog(parent,id,title,pos,size,style,name), m_type(type){
 
-        if(m_type == 0){
+        if(m_type == buyFundType){
             new wxStaticText(this, -1, "申购金额:",wxPoint(10, 10),wxSize(60, 20));
         }else {
             new wxStaticText(this, -1, "赎回金额:",wxPoint(10, 10),wxSize(60, 20));
@@ -47,16 +47,16 @@ public:
             return;
         }
 
-        double curCash=0, curShare=0;
-        qryCashAndShare(Runtime::getInstance()->CurComposeID, curCash, curShare);
+        double curCash=0, debet=0, curShare=0;
+        qryCashAndShare(Runtime::getInstance()->CurComposeID, curCash, debet, curShare);
 
         string datetime,value_advice, detailInfo;
-        double fundShare=0, fundValue=0,marketvalue=0,cash=0;
+        double fundShare=0, fundValue=0,marketvalue=0,cash=0; //主要为了获取基金每份净值
         qryValueInfo(Runtime::getInstance()->CurComposeID, datetime, value_advice, detailInfo, fundShare, fundValue,marketvalue,cash);//获取value_info数据，主要是为了获取净值数据
 
         string reasonStr;
         double newShare=0, newCash=0;
-        if (m_type == 0){
+        if (m_type == buyFundType){
             newCash = curCash + changeCash;
             double addShare = changeCash/fundValue;
             newShare = curShare + addShare;
@@ -69,7 +69,7 @@ public:
             reasonStr = "赎回：" + trim(reason);
         }
         
-        InsertCashRecord(Runtime::getInstance()->CurComposeID, changeCash, newCash, newShare, reasonStr);
+        InsertCashRecord(Runtime::getInstance()->CurComposeID,m_type, changeCash, newCash, debet, newShare, reasonStr);
 
         Destroy();
     }

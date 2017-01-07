@@ -5,8 +5,8 @@
 #include "CRTData.h"
 
 const std::string m_insertSql = "insert into value_info(compose_id,recordtime,marketvalue,cash,stock_ratio,\
-                                value_advice,detail_info,fund_share,fund_value,reference_index) \
-                                values(?,?,?,?,?,?,?,?,?,?)";
+                                debet,all_value,net_value,value_advice,detail_info,fund_share,fund_value,reference_index) \
+                                values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
 const std::string m_qryUnique = "select 1 from value_info where recordtime=?";
 const std::string m_qryComposefirst = "select 1 from value_info where compose_id=?";
 

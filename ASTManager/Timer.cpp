@@ -239,8 +239,8 @@ void Timer::Notify() {
 int Timer::RegValueInfo(int composeID, string recordtime, double marketvalue, string advice, string detailInfo, double ref_index) {
 
     //查询最新现金及份额，用于计算本次净值
-    double fCash = 0, fund_share = 0;
-    qryCashAndShare(composeID, fCash, fund_share);
+    double fCash = 0, fdebet=0, fund_share = 0;
+    qryCashAndShare(composeID, fCash, fdebet, fund_share);
 
 
     //父组合特殊处理
@@ -271,7 +271,8 @@ int Timer::RegValueInfo(int composeID, string recordtime, double marketvalue, st
         }
     }
 
-    double all_value = marketvalue + fCash;//总市值
+    double all_value = marketvalue + fCash;//总资产
+	double net_value = all_value - fdebet;
 
     if (all_value > -0.05 && all_value < 0.05) {
         return 0;
@@ -290,10 +291,10 @@ int Timer::RegValueInfo(int composeID, string recordtime, double marketvalue, st
         fund_value = 1;
         fund_share = all_value / fund_value;
         string reasonStr = "第一次调整组合份额";
-        InsertCashRecord(composeID, fCash, fCash, fund_share, reasonStr);
+        InsertCashRecord(composeID,AdjustBalance, fCash, fCash, 0, fund_share, reasonStr);
 
     } else {
-        fund_value = (int)((all_value) / fund_share * 10000 + 0.5) / 10000.00; //保存四位小数，四舍五入
+        fund_value = (int)((net_value) / fund_share * 10000 + 0.5) / 10000.00; //计算基金净值，保存四位小数，四舍五入
     }
 
     //插入db
@@ -309,11 +310,14 @@ int Timer::RegValueInfo(int composeID, string recordtime, double marketvalue, st
     Runtime::getInstance()->sqlite.bindDouble(3, marketvalue);
     Runtime::getInstance()->sqlite.bindDouble(4, fCash);
     Runtime::getInstance()->sqlite.bindString(5, stock_ratio, -1, SQLITE_STATIC);
-    Runtime::getInstance()->sqlite.bindString(6, stringTrim(advice).c_str(), -1, SQLITE_STATIC);
-    Runtime::getInstance()->sqlite.bindString(7, detailInfo.c_str(), -1, SQLITE_STATIC);
-    Runtime::getInstance()->sqlite.bindDouble(8, fund_share);
-    Runtime::getInstance()->sqlite.bindDouble(9, fund_value);
-    Runtime::getInstance()->sqlite.bindDouble(10, ref_index);
+	Runtime::getInstance()->sqlite.bindDouble(6, fdebet);
+	Runtime::getInstance()->sqlite.bindDouble(7, all_value);
+	Runtime::getInstance()->sqlite.bindDouble(8, net_value);
+    Runtime::getInstance()->sqlite.bindString(9, stringTrim(advice).c_str(), -1, SQLITE_STATIC);
+    Runtime::getInstance()->sqlite.bindString(10, detailInfo.c_str(), -1, SQLITE_STATIC);
+    Runtime::getInstance()->sqlite.bindDouble(11, fund_share);
+    Runtime::getInstance()->sqlite.bindDouble(12, fund_value);
+    Runtime::getInstance()->sqlite.bindDouble(13, ref_index);
 
     if (Runtime::getInstance()->sqlite.step() < 0) {
         wxMessageBox(Runtime::getInstance()->sqlite.errString);
@@ -377,6 +381,10 @@ bool Timer::UpdateAllPrice() {
         }
 
         for (std::map<std::string, RTInfo>::iterator iter = mAllStockInfo.begin(); iter != mAllStockInfo.end(); ++iter) {
+
+			if( iter->second.price <0.0001 && iter->second.price > -0.0001 ){ //如果获取到的为0，不更新，防止停牌等原因导致的为0价格
+				continue;
+			}
 
             Runtime::getInstance()->sqlite.setSql(updatePrice);
 

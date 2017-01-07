@@ -284,14 +284,14 @@ bool SellDialog::checkSellCondition(int sellNum, vector<LogDataDet>& vAllCanSell
 //更新临时现金份额表,卖出为正，买入为负
 int SellDialog::updateCash(double changeCash){
 
-    double curCash=0, curShare=0;
-    qryCashAndShare(Runtime::getInstance()->CurComposeID, curCash, curShare);
+    double curCash=0, debet=0, curShare=0;
+    qryCashAndShare(Runtime::getInstance()->CurComposeID, curCash, debet, curShare);
 
     double allCash = curCash + changeCash;
     string stockName = sellNameCtrl->GetValue();
     string reasonStr = "卖出:" + trim(stockName);
 
-    InsertCashRecord(Runtime::getInstance()->CurComposeID, changeCash, allCash, curShare, reasonStr);
+    InsertCashRecord(Runtime::getInstance()->CurComposeID, sellStockType, changeCash, allCash, debet, curShare, reasonStr);
 
 
     //更新界面显示
