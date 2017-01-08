@@ -206,6 +206,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FinanceFee2BuyDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FinanceFrame.cpp"
 				>
 			</File>
@@ -301,6 +305,10 @@
 			</File>
 			<File
 				RelativePath=".\DownNewsThread.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FinanceFee2BuyDialog.h"
 				>
 			</File>
 			<File

@@ -41,3 +41,5 @@ A_YONGJIN=5:0.00025 交易佣金：最高收费为3‰，最低收费5元。各家劵商收费不一，开户
 NewsDir=e:\ASTManager\news
 isNotify=0 #是否启动实时股价提醒
 dNewsApp=dnews.exe #下载新闻信息的程序名
+
+DebetDayRate=0.0002

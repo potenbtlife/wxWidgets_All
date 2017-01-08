@@ -11,6 +11,7 @@
 #include "DownLoadOneTbl.h"
 #include "OperHistoryDialog.h"
 #include "DebetOperDialog.h"
+#include "FinanceFee2BuyDialog.h"
 
 IMPLEMENT_APP(MyApp);
 
@@ -22,6 +23,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(ID_SELL_FOUND, MyFrame::OnSellFound)
 	EVT_MENU(ID_ADD_DEBET_FOUND, MyFrame::AddDebet)
 	EVT_MENU(ID_SUB_DEBET_FOUND, MyFrame::SubDebet)
+	EVT_MENU(ID_SUB_FINANCE_FEE_BUY, MyFrame::FinanceFee2Buy)
 	EVT_MENU(ID_OPER_HISTORY, MyFrame::OnOperHistory)
     EVT_MENU(ID_REPORT_MENU, MyFrame::OnShowValueReport)
     EVT_MENU(ID_DOWNLOAD_YEAR_THREETBL, MyFrame::DownLoadYearThreeTbl)
@@ -147,6 +149,7 @@ MyFrame::MyFrame(wxWindowID frameID, const wxString& title, const wxPoint& pos, 
 	menuFile->AppendSeparator();
 	menuFile->Append(ID_ADD_DEBET_FOUND, "&加杠杆", "借入资金");
 	menuFile->Append(ID_SUB_DEBET_FOUND, "&减杠杆", "归还资金");
+	menuFile->Append(ID_SUB_FINANCE_FEE_BUY, "&财务费用转申购", "扣除每月的杠杆产生的财务费用，并申购本基金");
 	menuFile->AppendSeparator();
 	menuFile->Append(ID_OPER_HISTORY, "&操作记录", "查看操作记录，并可回滚最近一次操作");
 
@@ -726,15 +729,21 @@ void MyFrame::OnSellFound(wxCommandEvent& event) {
 }
 
 void MyFrame::AddDebet(wxCommandEvent& event) {
-	DebetOperDialog* debetDialog = new DebetOperDialog(DEBET_OPER_TYPE::ADD, this, wxID_ANY, "加杠杆 对话框", wxPoint(0, 0), wxSize(300, 200), wxDEFAULT_DIALOG_STYLE);
+	DebetOperDialog* debetDialog = new DebetOperDialog(ADD, this, wxID_ANY, "加杠杆 对话框", wxPoint(0, 0), wxSize(300, 200), wxDEFAULT_DIALOG_STYLE);
 	debetDialog->Centre();
 	debetDialog->Show();
 }
 
 void MyFrame::SubDebet(wxCommandEvent& event) {
-	DebetOperDialog* debetDialog = new DebetOperDialog(DEBET_OPER_TYPE::SUB, this, wxID_ANY, "减杠杆 对话框", wxPoint(0, 0), wxSize(300, 200), wxDEFAULT_DIALOG_STYLE);
-	debetDialog->Centre();
+	DebetOperDialog* debetDialog = new DebetOperDialog(SUB, this, wxID_ANY, "减杠杆 对话框", wxPoint(0, 0), wxSize(300, 200), wxDEFAULT_DIALOG_STYLE);
+	debetDialog->Centre();	
 	debetDialog->Show();
+}
+
+void MyFrame::FinanceFee2Buy(wxCommandEvent& event) {
+	FinanceFee2BuyDialog* fee2buyDialog = new FinanceFee2BuyDialog(this, wxID_ANY, "财务费用转申购 对话框", wxPoint(0, 0), wxSize(300, 200), wxDEFAULT_DIALOG_STYLE);
+	fee2buyDialog->Centre();
+	fee2buyDialog->Show();
 }
 
 void MyFrame::OnOperHistory(wxCommandEvent& event){

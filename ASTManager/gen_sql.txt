@@ -1,12 +1,12 @@
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02869','绿城服务',0);
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02303','恒兴黄金',0);
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01027','中国集成控股',0);
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'06178','光大证券',0);
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01673','华章科技',0);
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'03893','易纬集团',0);
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01419','盈健医疗',0);
-
---cash_flow 以后加个变更金额字段; 买入、卖出自动现在最新价格
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'03963','融众金融',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01718','宏基集团',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02199','维珍妮',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01609','创建集团',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02031','澳至尊',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01557','剑虹集团',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01566','华夏动漫',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01662','义合控股',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00126','佳宁娜',0);
 
 --升级 wxwidgets，使用freechart注意事项：使用了wxAuiManager类 的MainFrame里的析构函数要调用 auiMan->UnInit();
 --
@@ -43,10 +43,13 @@ create table value_info
 keyid integer primary key autoincrement, --自增主键
 compose_id int,  --所属组合id
 recordtime time,  --记录时间
-marketvalue double, --shizhi
-cash double, --xianjin
-stock_ratio varchar(16), --zhangweizhanbi
-value_advice varchar(256), --cangweiguangli jianyi
+marketvalue double, --市值
+cash double, --现金余额
+stock_ratio varchar(16), --仓位占比
+debet double , -- 负债
+all_value double, --资产总值
+net_value double, --资产净值
+value_advice varchar(256), --仓位管理 建议
 detail_info varchar(2048), --以代码:数量:价格; 保存的详细列表
 fund_share double, --基金份额
 fund_value double, --基金净值
@@ -55,26 +58,28 @@ reference_index double --对比指数
 
 delete from value_info;
 --alter table value_info rename to value_info_bak;
---insert into value_info(keyid,compose_id,recordtime,marketvalue,cash,stock_ratio,value_advice,detail_info,fund_share,fund_value,reference_index) select keyid,compose_id,recordtime,marketvalue,cash,stock_ratio,value_advice,detail_info,fund_share,fund_value,0 from value_info_bak;
+--insert into value_info(keyid,compose_id,recordtime,marketvalue,cash,stock_ratio,debet,all_value,net_value,value_advice,detail_info,fund_share,fund_value,reference_index) select keyid,compose_id,recordtime,marketvalue,cash,stock_ratio,0,marketvalue+cash,marketvalue+cash,value_advice,detail_info,fund_share,fund_value,reference_index from value_info_bak;
 
 --记录现金和份额，用于保存在收市前的操作，用于收市后统计市值情况
 create table cash_flow
 (
 keyid integer primary key autoincrement, --自增主键
 compose_id int,     --所属组合id
+oper_type integer, --操作类型，1买入；2卖出；3申购（包含股息收入）；4赎回；5直接调整现金
 change_cash double, -- 变动金额
 after_cash double,  --变后现金
+debet double, --当前负债余额
 fund_share double,  --基金份额
 change_time time,   --变动时间
 change_reason varchar(256) --变动原因
 );
 
 delete from cash_flow;
-insert into cash_flow(compose_id,cash,fund_share,change_time,change_reason) values(1,0,0,0,datetime('now'),'新建');
-insert into cash_flow(compose_id,cash,fund_share,change_time,change_reason) values(2,0,0,0,datetime('now'),'新建');
+insert into cash_flow(compose_id,oper_type,cash,fund_share,change_time,change_reason) values(1,5,0,0,0,datetime('now'),'新建');
+insert into cash_flow(compose_id,oper_type,cash,fund_share,change_time,change_reason) values(2,5,0,0,0,datetime('now'),'新建');
 
 --alter table cash_flow rename to cash_flow_bak;
---insert into cash_flow(compose_id,cash,fund_share,change_time,change_reason)  select compose_id,cash,fund_share,change_time,change_reason from cash_flow_bak;
+--insert into cash_flow(compose_id,oper_type,change_cash,after_cash,debet,fund_share,change_time,change_reason)  select compose_id,oper_type,change_cash,after_cash,0,fund_share,change_time,change_reason from cash_flow_bak;
 
 --组合信息
 create table compose_info
@@ -218,6 +223,18 @@ shareValue double --每股净值
 create unique index idx_finance_index on finance_index(stock_id,report_time,report_type);
 --alter table finance_index rename to finance_index_bak;
 
+
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00687','香港国际建投',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02869','绿城服务',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02303','恒兴黄金',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01027','中国集成控股',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'06178','光大证券',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01673','华章科技',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'03893','易纬集团',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01419','盈健医疗',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'06858','本间高尔夫',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01559','均安控股',0);
+insert into stock_list(type,stock_id,stock_name,curprice) values(0,'02193','万景控股',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'03606','福耀玻璃',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01443','富临集团',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'01500','现恒建筑',0);
@@ -877,7 +894,6 @@ insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00683','嘉里
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00684','亚伦国际',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00685','世界华文媒体',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00686','金保利新能源',0);
-insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00687','泰升集团',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00688','中国海外发展',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00689','长盈集团(控股)',0);
 insert into stock_list(type,stock_id,stock_name,curprice) values(0,'00690','联康生物科技集团',0);

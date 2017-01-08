@@ -214,24 +214,6 @@ void Timer::Notify() {
             return;
         }
 
-        /*string dir = Runtime::getInstance()->configObj->find("NewsDir") + "\\";
-
-        LoadNewsThread* lnThread1 = new LoadNewsThread(datetime, datetime, dir, 0, 999);
-
-        if (lnThread1->Create() != wxTHREAD_NO_ERROR) {
-            wxLogError(wxT("Can't create thread!"));
-            return;
-        }
-
-        lnThread1->Run();*/
-
-        /*LoadNewsThread* lnThread2 = new LoadNewsThread(datetime, datetime, dir, 500, 999);
-        if (lnThread2->Create() != wxTHREAD_NO_ERROR) {
-            wxLogError(wxT("Can't create thread!"));
-            return;
-        }
-        lnThread2->Run();*/
-
     }
 
 };

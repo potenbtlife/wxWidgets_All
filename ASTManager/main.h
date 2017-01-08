@@ -64,6 +64,7 @@ class MyFrame: public wxFrame
         void OnSellFound(wxCommandEvent& event);
 		void AddDebet(wxCommandEvent& event);
 		void SubDebet(wxCommandEvent& event);
+		void FinanceFee2Buy(wxCommandEvent& event);
 		void OnOperHistory(wxCommandEvent& event);
 		//void OnExit(wxCommandEvent& event);
 
