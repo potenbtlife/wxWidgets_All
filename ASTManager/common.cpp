@@ -102,7 +102,7 @@ int getHKTradingFee(double tradeAmt, double& tax){
     double jiaoyifei = tradeAmt * 0.005 * 0.01;
     double yinhuashui = ceil(tradeAmt * 0.1 * 0.01);
     double jiaoyizhengfei = tradeAmt * 0.0027 * 0.01;
-    double zhongyangjiesuanfei = (tradeAmt*0.002 *0.01) > 2 ? (tradeAmt*0.002 *0.01):2;
+    double zhongyangjiesuanfei = (tradeAmt*0.002 *0.01) > 10 ? (tradeAmt*0.002 *0.01):10;
     
     //四舍五入到两位小数
     jiaoyifei = (int)((jiaoyifei + 0.005) * 100)/100.0;
