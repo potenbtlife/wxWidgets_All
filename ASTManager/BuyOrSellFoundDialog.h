@@ -64,8 +64,8 @@ public:
         }else{
 			changeCash = -1*changeCash;
             newCash = curCash + changeCash;
-            double reduceShare = changeCash/fundValue;
-            newShare = curShare - reduceShare;
+            double reduceShare = changeCash/fundValue;// 已为负数
+            newShare = curShare + reduceShare;
             reasonStr = "赎回：" + trim(reason);
         }
         

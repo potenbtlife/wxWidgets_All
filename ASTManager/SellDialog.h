@@ -54,6 +54,8 @@ public:
 	void OnCancel(wxCommandEvent& event);
 	void OnGetCurPrice(wxCommandEvent& event);//当标的代码框变动时，获取此代码的当前价格
     int updateCash(double cash); //更新临时现金份额表，卖出为正，买入为负
+
+	void SellDialog::UpdateYongJin(wxCommandEvent& event);//更新佣金控件
 	
 	DECLARE_EVENT_TABLE();
 

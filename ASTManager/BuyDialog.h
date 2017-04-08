@@ -44,6 +44,7 @@ public:
     int BuyUpdateCash(double cash); //更新临时现金份额表
 	void OnGetCurPrice(wxCommandEvent& event); //获取标的代码控件的id，根据此id来更新价格控件的价格
 
+	void UpdateYongJin(wxCommandEvent& event);
 	DECLARE_EVENT_TABLE();
 
 private:

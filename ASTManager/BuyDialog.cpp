@@ -11,6 +11,8 @@ BEGIN_EVENT_TABLE(BuyDialog, wxDialog)
 	EVT_BUTTON(ID_BUYCTRL_OK,   BuyDialog::OnOK)
 	EVT_BUTTON(ID_BUYCTRL_CANCEL,  BuyDialog::OnCancel)
 	EVT_TEXT(ID_BUYCODE_CTRL, OnGetCurPrice)
+	EVT_TEXT(ID_BUYPRICE_CTRL, UpdateYongJin)
+	EVT_TEXT(ID_BUYNUM_CTRL, UpdateYongJin)
 END_EVENT_TABLE()
 
 //买入窗口构造函数
@@ -159,6 +161,7 @@ int BuyDialog::BuyUpdateCash(double changeCash){
 //获取标的代码控件的id，根据此id来更新价格控件的价格
 void BuyDialog::OnGetCurPrice(wxCommandEvent& event)
 {
+	//获取价格，并更新
 	string stockId = buyCodeCtrl->GetValue();
 	double price = getPriceByStockId(stockId);
 	string stockName = getNameByStockId(stockId);
@@ -168,4 +171,27 @@ void BuyDialog::OnGetCurPrice(wxCommandEvent& event)
 	buyPriceCtrl->SetValue(strPrice);
 
 	buyNameCtrl->SetValue(stockName.c_str());
+
+	//更新佣金控件
+	UpdateYongJin(event);
+
+}
+
+void BuyDialog::UpdateYongJin(wxCommandEvent& event)
+{
+	//获取佣金，并更新显示
+	string stockCode = buyCodeCtrl->GetValue();
+	stringTrim(stockCode);
+
+	string buyPrice = buyPriceCtrl->GetValue();
+	string buyNum = buyNumCtrl->GetValue();
+
+	double yongjin=0;
+	if( getTradingFee(stockCode, atoi(buyNum.c_str()), atof(buyPrice.c_str()) * atoi(buyNum.c_str()), 0, yongjin) < 0 ){
+		wxMessageBox("计算佣金失败，请检查佣金配置！");
+	}
+
+	stringstream ss;
+	ss<<yongjin;
+	YongJinCtrl->SetValue(ss.str().c_str());
 }

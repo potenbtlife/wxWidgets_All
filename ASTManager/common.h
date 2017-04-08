@@ -12,6 +12,7 @@
 //#include "CRTData.h"
 #include <vector>
 #include <map>
+#include <sstream>
 
 static string gQryLogSql="select compose_id,stock_id,stock_name,buy_time,buy_price,buy_num,buy_allAmt,buy_reason,\
                          sell_time,sell_price,sell_num,sell_allAmt,sell_reason,trade_sumamt,trade_review,keyid,type \

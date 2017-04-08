@@ -10,6 +10,8 @@ BEGIN_EVENT_TABLE(SellDialog, wxDialog)
 	EVT_BUTTON(ID_SELLCTRL_OK,   SellDialog::OnOK)
 	EVT_BUTTON(ID_SELLCTRL_CANCEL,  SellDialog::OnCancel)
 	EVT_TEXT(ID_SELLCODE_CTRL, OnGetCurPrice)
+	EVT_TEXT(ID_SELLPRICE_CTRL, UpdateYongJin)
+	EVT_TEXT(ID_SELLNUM_CTRL, UpdateYongJin)
 END_EVENT_TABLE()
 
 //卖出窗口构造函数
@@ -206,6 +208,10 @@ void SellDialog::OnGetCurPrice(wxCommandEvent& event)
 	sprintf(strPrice,"%.3f", price);
 	sellPriceCtrl->SetValue(strPrice);
 	sellNameCtrl->SetValue(stockName.c_str());
+
+	//更新佣金控件
+	UpdateYongJin(event);
+
 }
 
 //插入一条卖出记录到数据库
@@ -301,4 +307,24 @@ int SellDialog::updateCash(double changeCash){
     cashCtrl->SetValue(cAllCash);
 
     return 1;
+}
+
+
+void SellDialog::UpdateYongJin(wxCommandEvent& event)
+{
+	//获取佣金，并更新显示
+	string stockCode = sellCodeCtrl->GetValue();
+	stringTrim(stockCode);
+
+	string price = sellPriceCtrl->GetValue();
+	string num = sellNumCtrl->GetValue();
+
+	double yongjin=0;
+	if( getTradingFee(stockCode, atoi(num.c_str()), atof(price.c_str()) * atoi(num.c_str()), 0, yongjin) < 0 ){
+		wxMessageBox("计算佣金失败，请检查佣金配置！");
+	}
+
+	stringstream ss;
+	ss<<yongjin;
+	YongJinCtrl->SetValue(ss.str().c_str());
 }
