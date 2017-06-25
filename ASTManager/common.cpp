@@ -164,6 +164,7 @@ void setPageFromVector2GridTable(vector<LogDataDet>& vSrc, wxGridStringTable& gr
         }
     }
 
+	gridStrTab.Clear();
     if (tmpSrc.size() == 0 && gridStrTab.GetNumberRows()<=1) { //以防日志记录为空时，没有数据导致界面被扭曲的情况
         gridStrTab.AppendRows(8);
         return;
@@ -173,7 +174,6 @@ void setPageFromVector2GridTable(vector<LogDataDet>& vSrc, wxGridStringTable& gr
 		return;
 	}
 
-	gridStrTab.Clear();
 	//规整gridStringTable中的行数为numInOnePage
 	if(gridStrTab.GetNumberRows() > getRowNumInOnePage(tmpSrc.size(), numInOnePage, pageNum)){
 		gridStrTab.DeleteRows(0, gridStrTab.GetNumberRows() - getRowNumInOnePage(tmpSrc.size(), numInOnePage, pageNum));

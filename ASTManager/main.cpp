@@ -368,14 +368,14 @@ void MyFrame::DownLoadOneThreeTbl(wxCommandEvent& event) {
     if (stockIdTmp == "") {
         return;
     }
-    WriteThreeRptToDb(0,stockIdTmp);
-    WriteThreeRptToDb(1,stockIdTmp);
+    //WriteThreeRptToDb(0,stockIdTmp);
+    //WriteThreeRptToDb(1,stockIdTmp);
 
     DeleteOneFinanceIndexFromDb("年报",stockIdTmp);
-    DeleteOneFinanceIndexFromDb("中报",stockIdTmp);
+    //DeleteOneFinanceIndexFromDb("中报",stockIdTmp);
 
     FinanceFrame::CalcAllFinanceIndex("年报", stockIdTmp);
-    FinanceFrame::CalcAllFinanceIndex("中报", stockIdTmp);
+    //FinanceFrame::CalcAllFinanceIndex("中报", stockIdTmp);
 }
 
 void MyFrame::DownLoadNews(wxCommandEvent& event) {
@@ -862,6 +862,7 @@ void MyFrame::OnShowOneFinance(wxGridEvent& event) {
 
 	FinanceFrame* financeFrame = new FinanceFrame(stockId);
 	financeFrame->Show(true);
+	financeFrame->Centre();
 
 	return;
 }
