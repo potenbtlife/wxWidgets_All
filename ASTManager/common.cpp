@@ -263,7 +263,7 @@ std::string genUrlRequestCode(std::string shortCode) {
 //genUrlRequestCode 函数的反函数
 std::string reverseUrlCode(std::string urlCode) {
     
-    if (urlCode.find("hk",0)!=string::npos || urlCode.find("sz0",0)!=string::npos || urlCode.find("sh6",0)!=string::npos){
+    if (urlCode.find("hk",0)!=string::npos || urlCode.find("sz",0)!=string::npos || urlCode.find("sh",0)!=string::npos){
         return urlCode.substr(2,-1);
     }
 

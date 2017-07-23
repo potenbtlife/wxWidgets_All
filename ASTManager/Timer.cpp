@@ -149,7 +149,7 @@ void Timer::Notify() {
 
                 if (iter2 == rtInfo.end()) {
                     Runtime::getInstance()->myTray.ShowBalloon("Faild2", "find rt info failed!");
-                    return;
+                    break;
                 }
 
                 marketValue += iter->second.num * iter2->second.price;
