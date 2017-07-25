@@ -164,8 +164,8 @@ void Timer::Notify() {
             std::string indexCode = Runtime::getInstance()->qryCompseIndex(composeId);;
 
             double ref_index = 0;
-            std::map<std::string, RTInfo>::iterator rtiter = rtInfo.find(trim(indexCode));
-
+            std::map<std::string, RTInfo>::iterator rtiter = rtInfo.find(reverseUrlCode(trim(indexCode)));
+			
             if (rtiter != rtInfo.end()) {
                 ref_index = int(rtiter->second.price * 100) / 100.0;
             }
