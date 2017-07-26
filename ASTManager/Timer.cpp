@@ -58,7 +58,7 @@ void Timer::Notify() {
     } else if ((hour * 60 + minute) > 12 * 60 && (hour * 60 + minute) < 13 * 60) { //如果大于12:00时，小于13:00时，直接返回
         return;
 
-    } else if ((hour * 60 + minute) > (17 * 60 + 30)) { //工作日，时间超过17:30，记录数据库
+    } else if ((hour * 60 + minute) > (19 * 60 + 0)) { //工作日，时间超过19:00，记录数据库
 
         if (0 == QryUnique(string(datetime.Format("%Y-%m-%d").c_str()))) {
             isRegInDb = true;
