@@ -649,8 +649,8 @@ void FinanceFrame::CalcOneFinanceIndexToDb(string stock_id, vector<BalanceData>&
         double yingshouzzl = 0, cunhuozzl = 0, gudingzicanzzl = 0, zongzicanzzl = 0, gangganlv = 0;
 
         if (i == maxCanCalcNum - 1) { //最后一个元素，不能用+1计算上一年的期末
-            roe = vecOneAllSunYi[sunyiPos].tax_profit / vecOneAllBalance[i].all_asset;
-            roa = vecOneAllSunYi[sunyiPos].tax_profit / (vecOneAllBalance[i].all_asset + vecOneAllBalance[i].all_dept);
+            roe = vecOneAllSunYi[sunyiPos].tax_profit / vecOneAllBalance[i].net_asset;
+            roa = vecOneAllSunYi[sunyiPos].tax_profit / (vecOneAllBalance[i].all_asset);
             yingshougrowthrate = 0;
             yingshoulvrungrowthrate = 0;
             zongzicangrowthrate = 0;
@@ -662,8 +662,8 @@ void FinanceFrame::CalcOneFinanceIndexToDb(string stock_id, vector<BalanceData>&
             gangganlv = vecOneAllBalance[i].all_asset / vecOneAllBalance[i].net_asset;
 
         } else {
-            roe = vecOneAllSunYi[sunyiPos].tax_profit / (vecOneAllBalance[i].all_asset + vecOneAllBalance[i + 1].all_asset) * 2;
-            roa = vecOneAllSunYi[sunyiPos].tax_profit / (vecOneAllBalance[i].all_asset + vecOneAllBalance[i].all_dept + vecOneAllBalance[i + 1].all_asset + vecOneAllBalance[i + 1].all_dept) * 2;
+            roe = vecOneAllSunYi[sunyiPos].tax_profit / (vecOneAllBalance[i].net_asset + vecOneAllBalance[i + 1].net_asset) * 2;
+            roa = vecOneAllSunYi[sunyiPos].tax_profit / (vecOneAllBalance[i].all_asset + vecOneAllBalance[i + 1].all_asset) * 2;
 
             if (sunyiPos == vecOneAllSunYi.size() - 1) {
                 yingshougrowthrate = 0;
