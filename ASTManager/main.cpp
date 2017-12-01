@@ -84,6 +84,7 @@ const std::string updateCurSql = "update compose_info set iscurrent = ? where co
 wxGridStringTable* dataSourceLog;
 wxGridStringTable* dataSourceGoods;
 
+
 //数据库中的composeid 和 菜单栏中的组合id对应关系：索引为数据库中compose_info的composeid，数组中的值为菜单栏中的组合id
 const int compostID2menuID[10] = { -1, ID_HKCOM, ID_ACOM, ID_ALLCOM};
 
@@ -367,14 +368,14 @@ void MyFrame::DownLoadOneThreeTbl(wxCommandEvent& event) {
     if (stockIdTmp == "") {
         return;
     }
-    WriteThreeRptToDb(0,stockIdTmp);
-    WriteThreeRptToDb(1,stockIdTmp);
+    //WriteThreeRptToDb(0,stockIdTmp);
+    //WriteThreeRptToDb(1,stockIdTmp);
 
     DeleteOneFinanceIndexFromDb("年报",stockIdTmp);
-    DeleteOneFinanceIndexFromDb("中报",stockIdTmp);
+    //DeleteOneFinanceIndexFromDb("中报",stockIdTmp);
 
     FinanceFrame::CalcAllFinanceIndex("年报", stockIdTmp);
-    FinanceFrame::CalcAllFinanceIndex("中报", stockIdTmp);
+    //FinanceFrame::CalcAllFinanceIndex("中报", stockIdTmp);
 }
 
 void MyFrame::DownLoadNews(wxCommandEvent& event) {
@@ -861,6 +862,7 @@ void MyFrame::OnShowOneFinance(wxGridEvent& event) {
 
 	FinanceFrame* financeFrame = new FinanceFrame(stockId);
 	financeFrame->Show(true);
+	financeFrame->Centre();
 
 	return;
 }

@@ -58,7 +58,7 @@ void Timer::Notify() {
     } else if ((hour * 60 + minute) > 12 * 60 && (hour * 60 + minute) < 13 * 60) { //如果大于12:00时，小于13:00时，直接返回
         return;
 
-    } else if ((hour * 60 + minute) > (17 * 60 + 30)) { //工作日，时间超过17:30，记录数据库
+    } else if ((hour * 60 + minute) > (19 * 60 + 0)) { //工作日，时间超过19:00，记录数据库
 
         if (0 == QryUnique(string(datetime.Format("%Y-%m-%d").c_str()))) {
             isRegInDb = true;
@@ -149,7 +149,7 @@ void Timer::Notify() {
 
                 if (iter2 == rtInfo.end()) {
                     Runtime::getInstance()->myTray.ShowBalloon("Faild2", "find rt info failed!");
-                    return;
+                    break;
                 }
 
                 marketValue += iter->second.num * iter2->second.price;
@@ -164,8 +164,8 @@ void Timer::Notify() {
             std::string indexCode = Runtime::getInstance()->qryCompseIndex(composeId);;
 
             double ref_index = 0;
-            std::map<std::string, RTInfo>::iterator rtiter = rtInfo.find(trim(indexCode));
-
+            std::map<std::string, RTInfo>::iterator rtiter = rtInfo.find(reverseUrlCode(trim(indexCode)));
+			
             if (rtiter != rtInfo.end()) {
                 ref_index = int(rtiter->second.price * 100) / 100.0;
             }

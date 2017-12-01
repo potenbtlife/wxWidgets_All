@@ -99,7 +99,8 @@ int CRTDataProxy::GetHttpData(string url, string& allGetData, FILE* flstm){
     }
     
     int httpCode = 0;
-    int res = Recv(m_Socket, allGetData, httpCode);
+    //int res = Recv(m_Socket, allGetData, httpCode); //huawei proxy need
+	int res = Recv(m_Socket, allGetData, httpCode, flstm);
     if(0 > res) {
         logger.wirte("Recv error! allGetData[%s]", allGetData);
         return res-10;
@@ -108,44 +109,49 @@ int CRTDataProxy::GetHttpData(string url, string& allGetData, FILE* flstm){
     if (httpCode == 200) //成功返回
     { 
         return 1;
-    }
+
+	}else{
+		return -1;
+	}
 
     /*char *t = "c00294700:#cdq860825"; 
     int i = 0; 
     int j = strlen(t); */
-    string tmpStr = m_proxyUserName +":"+ m_proxyPassword;
-    char *enc = base64_encode(tmpStr.c_str(), tmpStr.size()); 
+	
+	//below is huawei proxy need
+    //string tmpStr = m_proxyUserName +":"+ m_proxyPassword;
+    //char *enc = base64_encode(tmpStr.c_str(), tmpStr.size()); 
 
-    //发送第一次认证消息
-    string AuthHead="GET "+trim(url)+" HTTP/1.1\r\n";
-    AuthHead += "Host: "+host+"\r\n";
-    AuthHead += "Proxy-Connection: keep-alive\r\n";
-    //AuthHead += "Proxy-Authorization: NTLM TlRMTVNTUAABAAAAB4IIogAAAAAAAAAAAAAAAAAAAAAGAbEdAAAADw==\r\n";
-    AuthHead += "Proxy-Authorization: Basic ";
-    AuthHead += enc;
-    AuthHead += "\r\n";
-    AuthHead += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n";
-    AuthHead += "User-Agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36\r\n";
-    AuthHead += "Accept-Encoding: gzip, deflate, sdch\r\n";
-    AuthHead += "Accept-Language: zh-CN,zh;q=0.8,en;q=0.6\r\n\r\n";
+    ////发送第一次认证消息
+    //string AuthHead="GET "+trim(url)+" HTTP/1.1\r\n";
+    //AuthHead += "Host: "+host+"\r\n";
+    //AuthHead += "Proxy-Connection: keep-alive\r\n";
+    ////AuthHead += "Proxy-Authorization: NTLM TlRMTVNTUAABAAAAB4IIogAAAAAAAAAAAAAAAAAAAAAGAbEdAAAADw==\r\n";
+    //AuthHead += "Proxy-Authorization: Basic ";
+    //AuthHead += enc;
+    //AuthHead += "\r\n";
+    //AuthHead += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n";
+    //AuthHead += "User-Agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36\r\n";
+    //AuthHead += "Accept-Encoding: gzip, deflate, sdch\r\n";
+    //AuthHead += "Accept-Language: zh-CN,zh;q=0.8,en;q=0.6\r\n\r\n";
 
-    sRet = send(m_Socket, AuthHead.c_str(), AuthHead.length(), 0);
-    if(SOCKET_ERROR == sRet) {
-        logger.wirte("send error! AuthHead[%s]", AuthHead);
-        return -3;
-    }
+    //sRet = send(m_Socket, AuthHead.c_str(), AuthHead.length(), 0);
+    //if(SOCKET_ERROR == sRet) {
+    //    logger.wirte("send error! AuthHead[%s]", AuthHead);
+    //    return -3;
+    //}
 
 
-    if(0 > Recv(m_Socket, allGetData, httpCode, flstm)) { //此处读数据，没读全，需要调试
-        logger.wirte("Recv error!\r\n");
-        return -4;
-    }
+    //if(0 > Recv(m_Socket, allGetData, httpCode, flstm)) { //此处读数据，没读全，需要调试
+    //    logger.wirte("Recv error!\r\n");
+    //    return -4;
+    //}
 
-    if (httpCode != 200) {
-        //logger.wirte("http code is not 200! allGetData[%s]", allGetData);
-        logger.wirte("http code is not 200! url[%s]\n", url.c_str());
-        return -5;
-    }
+    //if (httpCode != 200) {
+    //    //logger.wirte("http code is not 200! allGetData[%s]", allGetData);
+    //    logger.wirte("http code is not 200! url[%s]\n", url.c_str());
+    //    return -5;
+    //}
 
     return 1;
 }
